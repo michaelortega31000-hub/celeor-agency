@@ -235,7 +235,7 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
 
 <div class="filters" id="filters"></div>
 <div class="subfilters" id="subfilters"></div>
-<div class="note">⚠️ Démo : prestataires fictifs (données d'exemple). Le catalogue se remplira avec les vrais profils inscrits.</div>
+<div class="note">Le catalogue ouvre ses portes : les premiers profils vérifiés arrivent. Vous êtes artiste ou prestataire ? <a href="contact.html?sujet=prestataire" style="color:var(--gold2);font-weight:600">Créez votre profil</a>.</div>
 <div class="results-meta"><b id="count">0</b> prestataire(s) — <span id="catlabel">Tous</span><span id="sublabel"></span></div>
 <div class="grid" id="grid"></div>
 
@@ -288,7 +288,7 @@ function render(){
   document.getElementById('catlabel').textContent = cat.label;
   document.getElementById('sublabel').textContent = sb ? ' › '+sb.label : '';
   const grid = document.getElementById('grid');
-  if(rows.length===0){ grid.innerHTML = '<div class="empty">Aucun prestataire pour ces critères pour le moment.<br><br><a href="appel-offres.html">Publiez un appel d\'offres</a> : les prestataires correspondants vous répondront directement.</div>'; return; }
+  if(rows.length===0){ grid.innerHTML = '<div class="empty">Aucun profil publié pour ces critères pour le moment.<br><br><a href="appel-offres.html">Publiez un appel d\'offres</a> : Celeor transmet votre besoin aux prestataires correspondants, qui vous répondent directement.<br><br>Vous êtes prestataire ? <a href="contact.html?sujet=prestataire">Créez votre profil</a>.</div>'; return; }
   grid.innerHTML = rows.map((d,i)=>`
     <div class="card" onclick="location.href='fiche.html?id=${d.id}'">
       <div class="card-img" style="background-image:url('${(window.CELEOR_PHOTOS||{})[d.c]||''}');background-size:cover;background-position:center;background-color:#14101f"><span class="card-veil"></span>
@@ -300,7 +300,7 @@ function render(){
         <div class="type">${d.t}</div>
         <div class="loc">📍 ${d.city}</div>
         <div class="card-meta">
-          <div class="stars">${starStr(d.r)} <span class="star-count">(${d.rev})</span></div>
+          <div class="stars">${d.rev ? starStr(d.r)+' <span class="star-count">('+d.rev+')</span>' : '<span class="star-count">Nouveau</span>'}</div>
           <div class="price">${d.price}</div>
         </div>
         <button class="btn-quote" onclick="event.stopPropagation();location.href='fiche.html?id=${d.id}'">Voir le profil &amp; réserver</button>

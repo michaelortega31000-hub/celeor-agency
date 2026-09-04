@@ -230,7 +230,7 @@ function render(){
         <h1>${P.n}</h1>
         <div class="pf-type">${P.t}</div>
         <div class="pf-meta">
-          <span class="stars">${starStr(P.r)} <span style="color:var(--gray2)">(${P.rev} avis)</span></span>
+          ${P.rev ? `<span class="stars">${starStr(P.r)} <span style="color:var(--gray2)">(${P.rev} avis)</span></span>` : `<span style="color:var(--gray2);font-size:12px">Nouveau sur Celeor</span>`}
           <span>📍 ${P.city}</span>
           <span class="pf-avail-tag"><span class="dot"></span>Disponible</span>
           <span style="color:var(--white);font-weight:700">${P.price}</span>
@@ -244,7 +244,7 @@ function render(){
           <p class="bio">${P.bio}</p>
           <div class="infos">
             <span class="info-chip">📍 ${P.zone||P.city}</span>
-            <span class="info-chip">⭐ ${P.r}/5 · ${P.rev} avis</span>
+            ${P.rev ? `<span class="info-chip">⭐ ${P.r}/5 · ${P.rev} avis</span>` : ''}
             <span class="info-chip">🎫 ${P.price}</span>
           </div>
         </div>

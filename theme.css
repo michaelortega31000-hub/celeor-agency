@@ -257,3 +257,11 @@ html[data-theme="light"] #celeor-chat-input { background: #FCFBF8; border-color:
 html[data-theme="light"] #celeor-chat-input::placeholder { color: #7A7F88; }
 html[data-theme="light"] #celeor-chat-input:focus { border-color: #C6A15B; }
 html[data-theme="light"] .celeor-typing span { background: #A9AEB7; }
+/* Tagline du hero : evite le separateur orphelin en fin de ligne sur mobile
+   et compense le letter-spacing final pour un centrage optique correct. */
+.hero-tagline .tl-g { white-space: nowrap; }
+@media (max-width: 640px) {
+  .hero-tagline { display: flex; flex-direction: column; align-items: center; row-gap: 7px; }
+  .hero-tagline .tl-x { display: none; }
+  .hero-tagline .tl-g { text-indent: 8px; }
+}

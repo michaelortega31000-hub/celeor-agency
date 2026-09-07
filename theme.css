@@ -4,6 +4,8 @@
    codées en dur. Le dark mode reste celui des pages (inchangé).
    ═══════════════════════════════════════════════════════════════ */
 
+/* Ancien bouton « Trouver mon prestataire » masqué : le chatbot (rond logo) le remplace */
+#cel-ast-btn { display: none !important; }
 
 /* ── Transition douce lors du basculement ─────────────────────── */
 html.theme-switching,

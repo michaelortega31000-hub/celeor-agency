@@ -1816,7 +1816,7 @@ const counterObs = new IntersectionObserver(entries => {
     counterObs.unobserve(el);
   });
 }, { threshold: .5 });
-counters.forEach(el => counterObs.observe(el));
+counters.forEh(el => counterObs.observe(el));
 
 // ── TILT 3D ────────────────────────────────────────────────────────
 document.querySelectorAll('[data-tilt]').forEach(card => {
@@ -1836,5 +1836,6 @@ document.querySelectorAll('[data-tilt]').forEach(card => {
 </script>
 <script src="data.js"></script>
 <script src="assistant.js"></script>
+<script src="chatbot.js"></script>
 </body>
 </html>

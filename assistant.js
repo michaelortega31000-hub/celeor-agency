@@ -211,3 +211,8 @@
   }
   function reset(){ S = { step:'start', cat:null, sub:null, event:null, city:null, date:null, budget:null }; bot('On repart de zéro. Quel type de prestation cherchez-vous ?', askCat); }
 })();
+
+// Load chatbot widget
+if(!document.querySelector('script[src="chatbot.js"]')){
+var s=document.createElement('script');s.src='chatbot.js';document.body.appendChild(s);
+}

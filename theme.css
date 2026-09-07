@@ -1,0 +1,257 @@
+/* ═══════════════════════════════════════════════════════════════
+   CELEOR AGENCY — Theme system (Dark = défaut / Light = champagne)
+   Ce fichier ne redéfinit que les tokens et les quelques couleurs
+   codées en dur. Le dark mode reste celui des pages (inchangé).
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* ── Transition douce lors du basculement ─────────────────────── */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: background-color .35s ease, color .35s ease, border-color .35s ease,
+              box-shadow .35s ease, fill .35s ease, stroke .35s ease !important;
+}
+
+/* ── Toggle ──────────────────────────────────────────────────── */
+.theme-toggle {
+  position: relative; display: inline-flex; align-items: center; flex-shrink: 0;
+  width: 46px; height: 24px; border-radius: 100px; cursor: pointer;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+  padding: 0; margin: 0; transition: border-color .25s, background .25s;
+}
+.theme-toggle:hover { border-color: var(--gold3); }
+.theme-toggle:focus-visible { outline: 2px solid var(--gold2); outline-offset: 2px; }
+.theme-toggle .tt-knob {
+  position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold2), var(--gold3));
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .35s cubic-bezier(.4,0,.2,1), background .35s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.35);
+}
+.theme-toggle .tt-knob svg { width: 11px; height: 11px; display: block; }
+.theme-toggle .tt-sun { display: none; }
+.theme-toggle .tt-moon { display: block; }
+html[data-theme="light"] .theme-toggle .tt-knob { transform: translateX(22px); }
+html[data-theme="light"] .theme-toggle .tt-sun { display: block; }
+html[data-theme="light"] .theme-toggle .tt-moon { display: none; }
+html[data-theme="light"] .theme-toggle { background: rgba(13,21,32,0.06); border-color: rgba(13,21,32,0.18); }
+
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT MODE — Celeor Champagne
+   ═══════════════════════════════════════════════════════════════ */
+html[data-theme="light"] {
+  --black:   #F7F4EE;   /* fond principal — ivoire chaud */
+  --dark:    #EFEBE2;   /* sections alternées — ivoire profond */
+  --card:    #FCFBF8;   /* surfaces / cartes — blanc cassé */
+  --border:  #DED7CB;   /* bordures — taupe clair */
+
+  --purple:  #0D1520;   /* CTA & accents forts — bleu nuit */
+  --purple2: #2B3A55;   /* bleu nuit clair (dégradés, labels) */
+  --purple3: #0A111A;
+
+  --gold:    #C6A15B;   /* or champagne — décor */
+  --gold2:   #9A7736;   /* or champagne lisible sur ivoire (texte) */
+  --gold3:   #C6A15B;
+
+  --white:   #0D1520;   /* texte principal */
+  --gray:    #4B505A;   /* texte secondaire — anthracite */
+  --gray2:   #7A7F88;   /* texte tertiaire */
+}
+
+/* ── Navigation & menu ───────────────────────────────────────── */
+html[data-theme="light"] nav {
+  background: rgba(247,244,238,0.9);
+  border-bottom: 1px solid rgba(13,21,32,0.08);
+}
+html[data-theme="light"] nav.nav-scrolled { background: rgba(247,244,238,0.97); }
+html[data-theme="light"] .btn-menu,
+html[data-theme="light"] .btn-outline { border-color: rgba(13,21,32,0.2); }
+html[data-theme="light"] .btn-outline:hover { background: rgba(13,21,32,0.05); border-color: rgba(13,21,32,0.4); }
+html[data-theme="light"] .menu-overlay { background: rgba(13,21,32,0.35); }
+html[data-theme="light"] .menu-panel {
+  background: rgba(252,251,248,0.98);
+  border-bottom: 1px solid rgba(13,21,32,0.08);
+  box-shadow: 0 24px 60px rgba(13,21,32,0.14);
+}
+html[data-theme="light"] .menu-col-title { border-bottom-color: rgba(13,21,32,0.1); }
+html[data-theme="light"] .menu-account { border-top-color: rgba(13,21,32,0.1); }
+html[data-theme="light"] .menu-col a:hover { color: #0D1520; }
+html[data-theme="light"] .btn-primary { color: #F7F4EE; }
+html[data-theme="light"] .btn-primary:hover { background: #2B3A55; }
+
+/* ── Sections & composants communs ───────────────────────────── */
+html[data-theme="light"] .section-tag::before { background: rgba(13,21,32,0.25); }
+html[data-theme="light"] .price { color: rgba(13,21,32,0.85); }
+html[data-theme="light"] .testi-card:hover,
+html[data-theme="light"] .portfolio-card:hover,
+html[data-theme="light"] .trust-logo-pill:hover { border-color: rgba(13,21,32,0.18); }
+html[data-theme="light"] .testi-card:hover,
+html[data-theme="light"] .artist-card:hover,
+html[data-theme="light"] .card:hover,
+html[data-theme="light"] .cat-card:hover,
+html[data-theme="light"] .portfolio-card:hover { box-shadow: 0 16px 40px rgba(13,21,32,0.12); }
+html[data-theme="light"] .trust-logo-pill { border-color: rgba(13,21,32,0.1); }
+html[data-theme="light"] .step { background: rgba(252,251,248,0.85); }
+html[data-theme="light"] .fsection { border-bottom-color: rgba(13,21,32,0.1); }
+
+/* ── Hero index : photo éclaircie « golden hour », texte bleu nuit ── */
+html[data-theme="light"] .hero-overlay { background: rgba(247,244,238,0.70); }
+html[data-theme="light"] .hero-gradient-overlay {
+  background: linear-gradient(to bottom, rgba(247,244,238,0.55) 0%, rgba(247,240,228,0.30) 40%, rgba(247,244,238,0.75) 100%);
+}
+html[data-theme="light"] .hero-scanlines { opacity: 0.15; }
+html[data-theme="light"] .hero-vignette { background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(247,244,238,0.85) 100%); }
+html[data-theme="light"] .hero-glow-purple { background: radial-gradient(circle, rgba(198,161,91,0.18) 0%, transparent 70%); }
+html[data-theme="light"] .hero-light-bar { background: linear-gradient(90deg, transparent, rgba(198,161,91,0.5), rgba(13,21,32,0.2), transparent); }
+html[data-theme="light"] .hero-badge { border-color: rgba(13,21,32,0.25); background: rgba(198,161,91,0.12); color: #0D1520; }
+html[data-theme="light"] .hero-title .letter { color: #0D1520; }
+html[data-theme="light"] .hero-tagline { color: #9A7736; }
+html[data-theme="light"] .hero-sub { color: rgba(13,21,32,0.72); }
+html[data-theme="light"] .btn-hero-primary:hover { box-shadow: 0 12px 40px rgba(13,21,32,0.3); }
+html[data-theme="light"] .btn-hero-ghost { border-color: rgba(154,119,54,0.6); color: #9A7736; background: rgba(198,161,91,0.08); }
+html[data-theme="light"] .btn-hero-ghost:hover { border-color: #0D1520; color: #0D1520; background: rgba(13,21,32,0.05); }
+
+/* Scènes ambiance (index) : fonds ivoire chauds + halos champagne */
+html[data-theme="light"] .scene-talents,
+html[data-theme="light"] .scene-stage,
+html[data-theme="light"] .scene-booking,
+html[data-theme="light"] .scene-podcast { animation: none; }
+html[data-theme="light"] .scene-talents {
+  background: radial-gradient(ellipse 60% 70% at 50% 0%, rgba(198,161,91,0.22), transparent 60%),
+              radial-gradient(ellipse 40% 50% at 85% 80%, rgba(43,58,85,0.10), transparent 60%), #EFEBE2; }
+html[data-theme="light"] .scene-stage {
+  background: radial-gradient(ellipse 55% 65% at 50% 0%, rgba(198,161,91,0.28), transparent 55%),
+              radial-gradient(ellipse 42% 55% at 18% 22%, rgba(43,58,85,0.08), transparent 55%), #F7F4EE; }
+html[data-theme="light"] .scene-booking {
+  background: linear-gradient(120deg, rgba(43,58,85,0.08), transparent 42%),
+              radial-gradient(ellipse 48% 58% at 76% 32%, rgba(198,161,91,0.24), transparent 55%), #EFEBE2; }
+html[data-theme="light"] .scene-podcast {
+  background: radial-gradient(ellipse 34% 55% at 50% 34%, rgba(198,161,91,0.26), transparent 55%),
+              radial-gradient(ellipse 60% 60% at 50% 118%, rgba(43,58,85,0.10), transparent 60%), #F7F4EE; }
+html[data-theme="light"] .overlay-talents,
+html[data-theme="light"] .overlay-stage,
+html[data-theme="light"] .overlay-booking,
+html[data-theme="light"] .overlay-podcast { background: linear-gradient(180deg, rgba(247,244,238,0.35) 0%, rgba(247,244,238,0.15) 50%, rgba(247,244,238,0.45) 100%); }
+html[data-theme="light"] .scene-talents::after,
+html[data-theme="light"] .scene-booking::after,
+html[data-theme="light"] .scene-podcast::after { opacity: .5; }
+
+/* Cartes photo (bannière podcast, portfolio, fondatrice) : restent sombres, texte clair */
+html[data-theme="light"] .podcast-banner,
+html[data-theme="light"] .portfolio-card,
+html[data-theme="light"] .fondatrice-photo-wrap {
+  --white: #FFFFFF; --gray: #C9CBD3; --gray2: #9A9AAA; --gold2: #E4C57A; --purple2: #E4C57A;
+  color: #FFFFFF;
+}
+html[data-theme="light"] .podcast-banner::after {
+  background: linear-gradient(to right, rgba(13,21,32,0.94) 0%, rgba(13,21,32,0.72) 45%, rgba(13,21,32,0.35) 100%),
+              linear-gradient(135deg, rgba(198,161,91,0.18) 0%, rgba(0,0,0,0) 60%);
+}
+html[data-theme="light"] .portfolio-type-badge { background: rgba(13,21,32,0.75); }
+html[data-theme="light"] .fondatrice-photo-wrap { background: linear-gradient(135deg, rgba(43,58,85,0.12), rgba(198,161,91,0.08)); }
+html[data-theme="light"] .fondatrice-glow { background: radial-gradient(circle, rgba(198,161,91,0.16), transparent 70%); }
+html[data-theme="light"] .fondatrice-quote { border-left-color: rgba(198,161,91,0.7); background: rgba(198,161,91,0.06); }
+
+/* Teintes violettes résiduelles → champagne / bleu nuit */
+html[data-theme="light"] .artist-card:hover,
+html[data-theme="light"] .service-card:hover { border-color: rgba(198,161,91,0.5); }
+html[data-theme="light"] .service-card::before { background: linear-gradient(90deg, transparent, rgba(198,161,91,0.6), transparent); }
+html[data-theme="light"] .svc-icon { background: rgba(198,161,91,0.12); border-color: rgba(198,161,91,0.35); }
+html[data-theme="light"] .btn-add-cart { background: rgba(198,161,91,0.14); border-color: rgba(154,119,54,0.4); }
+html[data-theme="light"] .cta-block.artist { background: linear-gradient(135deg, rgba(43,58,85,0.06) 0%, transparent 60%); }
+html[data-theme="light"] .cta-glow-artist { background: radial-gradient(circle, rgba(198,161,91,0.14), transparent 70%); }
+html[data-theme="light"] .btn-purple:hover { box-shadow: 0 8px 30px rgba(13,21,32,0.25); }
+html[data-theme="light"] .footer-social-link:hover { background: rgba(198,161,91,0.15); }
+
+/* Dégradés violets → bleu nuit / champagne */
+html[data-theme="light"] .btn-submit,
+html[data-theme="light"] .celeor-form .btn-submit { background: linear-gradient(135deg, #0D1520, #2B3A55); color: #F7F4EE; }
+html[data-theme="light"] .btn-submit.gold { background: linear-gradient(135deg, #9A7736, #C6A15B); color: #0D1520; }
+html[data-theme="light"] .step-num,
+html[data-theme="light"] h1 .hl,
+html[data-theme="light"] .cat-header h1 .hl,
+html[data-theme="light"] .celeor-form h3 .hl,
+html[data-theme="light"] .footer-brand .brand-name { background: linear-gradient(135deg, #2B3A55, #C6A15B); -webkit-background-clip: text; background-clip: text; }
+
+/* Halos violets des sous-pages → champagne */
+html[data-theme="light"] .cat-header::before { background: radial-gradient(ellipse 50% 60% at 50% 0%, rgba(198,161,91,0.20), transparent 60%); }
+html[data-theme="light"] .page::before { background: radial-gradient(ellipse 60% 45% at 50% 0%, rgba(198,161,91,0.18), transparent 65%); }
+html[data-theme="light"] .pill:hover,
+html[data-theme="light"] .profile-btn:hover,
+html[data-theme="light"] .card:hover { border-color: rgba(198,161,91,0.55); }
+html[data-theme="light"] .btn-quote { background: rgba(198,161,91,0.12); border-color: rgba(154,119,54,0.4); color: #9A7736; }
+html[data-theme="light"] .wip { border-color: rgba(154,119,54,0.5); }
+
+/* Catalogue / fiche */
+html[data-theme="light"] .card .ph { color: rgba(13,21,32,0.25); }
+html[data-theme="light"] .pf-avatar { color: rgba(13,21,32,0.3); }
+html[data-theme="light"] .cal-nav:hover { color: #0D1520; }
+html[data-theme="light"] .cal-day.avail { background: rgba(13,21,32,0.06); border-color: rgba(13,21,32,0.3); color: #0D1520; }
+html[data-theme="light"] .pill.active,
+html[data-theme="light"] .profile-btn.active,
+html[data-theme="light"] .btn-quote:hover,
+html[data-theme="light"] .searchbar .btn-search { color: #F7F4EE; }
+
+/* ── Footer : reste bleu nuit en light mode (section premium) ── */
+html[data-theme="light"] footer {
+  --black:  #0D1520; --dark: #0D1520; --card: #141D2B; --border: rgba(255,255,255,0.1);
+  --white:  #F7F4EE; --gray: #B9BFC9; --gray2: #8C93A0;
+  --gold2:  #E4C57A; --gold3: #C6A15B;
+  --purple: #C6A15B; --purple2: #E4C57A;
+  background: #0D1520; border-top: 1px solid rgba(255,255,255,0.08); color: #F7F4EE;
+}
+html[data-theme="light"] footer .footer-brand .brand-name { background: linear-gradient(135deg, #E4C57A, #C6A15B); -webkit-background-clip: text; background-clip: text; }
+html[data-theme="light"] footer .footer-col ul li a { color: rgba(247,244,238,0.5); }
+html[data-theme="light"] footer .footer-col ul li a:hover { color: #F7F4EE; }
+
+/* ── Widget "Trouver mon prestataire" (assistant.js) ─────────── */
+html[data-theme="light"] #cel-ast-btn {
+  background: linear-gradient(135deg, #0D1520, #1C2838); color: #F7F4EE;
+  border-color: rgba(198,161,91,0.6); box-shadow: 0 12px 34px rgba(13,21,32,0.25);
+}
+html[data-theme="light"] #cel-ast-btn .ic,
+html[data-theme="light"] #cel-ast .hd .av { background: linear-gradient(135deg, #C6A15B, #9A7736); }
+html[data-theme="light"] #cel-ast { background: #FCFBF8; border-color: #DED7CB; color: #0D1520; box-shadow: 0 24px 60px rgba(13,21,32,0.2); }
+html[data-theme="light"] #cel-ast .hd { background: linear-gradient(135deg, #0D1520, #1C2838); color: #F7F4EE; border-bottom-color: rgba(255,255,255,0.08); }
+html[data-theme="light"] #cel-ast .hd small { color: #B9BFC9; }
+html[data-theme="light"] #cel-ast .hd .x { color: #B9BFC9; }
+html[data-theme="light"] #cel-ast .hd .x:hover { color: #F7F4EE; }
+html[data-theme="light"] #cel-ast .m.bot { background: #F1EDE4; border-color: #DED7CB; color: #0D1520; }
+html[data-theme="light"] #cel-ast .m.user { background: linear-gradient(135deg, #0D1520, #2B3A55); color: #F7F4EE; }
+html[data-theme="light"] #cel-ast .m a { color: #9A7736; }
+html[data-theme="light"] #cel-ast .chip { background: #FCFBF8; border-color: #DED7CB; color: #20242A; }
+html[data-theme="light"] #cel-ast .chip:hover { border-color: #C6A15B; color: #9A7736; }
+html[data-theme="light"] #cel-ast .chip.gold { color: #9A7736; border-color: rgba(198,161,91,0.7); }
+html[data-theme="light"] #cel-ast .chip.purple { color: #2B3A55; border-color: rgba(43,58,85,0.5); }
+html[data-theme="light"] #cel-ast .card { background: #FCFBF8; border-color: #DED7CB; color: #0D1520; }
+html[data-theme="light"] #cel-ast .card .ph { background-color: #EFEBE2; color: rgba(13,21,32,0.35); }
+html[data-theme="light"] #cel-ast .card span { color: #4B505A; }
+html[data-theme="light"] #cel-ast .card .pr { color: #9A7736; }
+html[data-theme="light"] #cel-ast .typing { background: #F1EDE4; color: #4B505A; }
+html[data-theme="light"] #cel-ast .ft { background: #F7F4EE; border-top-color: #DED7CB; }
+html[data-theme="light"] #cel-ast .ft input { background: #FCFBF8; border-color: #DED7CB; color: #0D1520; }
+html[data-theme="light"] #cel-ast .ft input:focus { border-color: #C6A15B; }
+html[data-theme="light"] #cel-ast .ft button { background: linear-gradient(135deg, #C6A15B, #9A7736); color: #0D1520; }
+html[data-theme="light"] #cel-ast .disc { background: #F7F4EE; color: #7A7F88; }
+
+/* ── Chatbot (chatbot.js) ────────────────────────────────────── */
+html[data-theme="light"] #celeor-chat-btn { background: #0D1520; box-shadow: 0 4px 20px rgba(198,161,91,.35), 0 2px 8px rgba(13,21,32,.2); }
+html[data-theme="light"] #celeor-chat-window { background: #FCFBF8; border-color: #C6A15B; box-shadow: 0 8px 40px rgba(13,21,32,.18), 0 0 20px rgba(198,161,91,.12); }
+html[data-theme="light"] #celeor-chat-header { background: linear-gradient(135deg, #0D1520, #1F2A3C); border-bottom-color: #C6A15B; }
+html[data-theme="light"] #celeor-chat-header-text h3 { color: #E4C57A; }
+html[data-theme="light"] #celeor-chat-header-text p { color: #B9BFC9; }
+html[data-theme="light"] #celeor-chat-close { color: #B9BFC9; }
+html[data-theme="light"] #celeor-chat-close:hover { color: #E4C57A; }
+html[data-theme="light"] #celeor-chat-messages::-webkit-scrollbar-thumb { background: #DED7CB; }
+html[data-theme="light"] .celeor-msg.bot { background: #F1EDE4; color: #0D1520; }
+html[data-theme="light"] .celeor-msg.user { background: linear-gradient(135deg, #0D1520, #2B3A55); color: #F7F4EE; }
+html[data-theme="light"] .celeor-msg a { color: #9A7736 !important; }
+html[data-theme="light"] .celeor-choice-btn { border-color: #C6A15B; color: #9A7736; }
+html[data-theme="light"] .celeor-choice-btn:hover { background: #C6A15B; color: #0D1520; }
+html[data-theme="light"] #celeor-chat-input-area { background: #F7F4EE; border-top-color: #DED7CB; }
+html[data-theme="light"] #celeor-chat-input { background: #FCFBF8; border-color: #DED7CB; color: #0D1520; }
+html[data-theme="light"] #celeor-chat-input::placeholder { color: #7A7F88; }
+html[data-theme="light"] #celeor-chat-input:focus { border-color: #C6A15B; }
+html[data-theme="light"] .celeor-typing span { background: #A9AEB7; }

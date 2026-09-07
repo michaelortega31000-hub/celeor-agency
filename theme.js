@@ -46,3 +46,25 @@
     buildToggle();
   }
 })();
+
+/* Visuels des cartes categories : reutilise les images deja presentes dans data.js
+   (evite de les dupliquer dans le HTML de la page d'accueil). */
+(function () {
+  function applyCategoryPhotos() {
+    var photos = window.CELEOR_PHOTOS;
+    if (!photos) return;
+    var cards = document.querySelectorAll('.cat-card');
+    for (var i = 0; i < cards.length; i++) {
+      var ph = cards[i].querySelector('.cat-photo');
+      if (!ph || ph.style.backgroundImage) continue;
+      var href = cards[i].getAttribute('href') || '';
+      var slug = href.split('#')[1];
+      if (slug && photos[slug]) ph.style.backgroundImage = 'url(' + photos[slug] + ')';
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyCategoryPhotos);
+  } else {
+    applyCategoryPhotos();
+  }
+})();

@@ -365,14 +365,17 @@ function toggleDiscipline(){ document.getElementById('fw-disc').style.display = 
 // ── Envoi générique (FormSubmit AJAX + secours mailto)
 async function sendForm(form, btnId, msgId, okText, mailSubject){
   const btn = document.getElementById(btnId), msg = document.getElementById(msgId);
-  btn.disabled = true; msg.className = 'form-msg';
+  btn.disabled = true;
+  const finPending = window.celeorPending(msg, btn, 'Envoi en cours…');
   const data = Object.fromEntries(new FormData(form).entries()); delete data._honey;
   try{
     const r = await fetch('https://formsubmit.co/ajax/' + CELEOR_FORM_EMAIL, { method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(data) });
     if(!r.ok) throw new Error('HTTP ' + r.status);
+    finPending(); msg.className = 'form-msg';
     msg.innerHTML = okText; msg.classList.add('ok');
   }catch(err){
+    finPending(); msg.className = 'form-msg';
     const corps = encodeURIComponent(Object.entries(data).filter(([k]) => !k.startsWith('_')).map(([k,v]) => k + ' : ' + v).join('\n'));
     msg.innerHTML = 'Envoi impossible pour le moment. <a href="mailto:' + CELEOR_FORM_EMAIL + '?subject=' + encodeURIComponent(mailSubject) + '&body=' + corps + '">Cliquez ici pour envoyer par email</a>.';
     msg.classList.add('err');

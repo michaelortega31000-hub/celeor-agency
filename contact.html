@@ -295,7 +295,8 @@ if (sujet === 'reservation') document.getElementById('f-subject').value = '🎉 
 document.getElementById('contact-form').addEventListener('submit', async function(e){
   e.preventDefault();
   const form = this, btn = document.getElementById('f-submit'), msg = document.getElementById('form-msg');
-  btn.disabled = true; msg.className = 'form-msg';
+  btn.disabled = true;
+  const finPending = window.celeorPending(msg, btn, 'Envoi de votre demande…');
   const data = Object.fromEntries(new FormData(form).entries());
   try{
     const r = await fetch('https://formsubmit.co/ajax/' + CELEOR_FORM_EMAIL, {
@@ -303,9 +304,11 @@ document.getElementById('contact-form').addEventListener('submit', async functio
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error('HTTP ' + r.status);
+    finPending(); msg.className = 'form-msg';
     msg.textContent = '✓ Message envoyé ! Nous revenons vers vous sous 24h.';
     msg.classList.add('ok'); form.reset();
   }catch(err){
+    finPending(); msg.className = 'form-msg';
     const corps = encodeURIComponent(Object.entries(data)
       .filter(([k]) => !k.startsWith('_'))
       .map(([k,v]) => k + ' : ' + v).join('\n'));

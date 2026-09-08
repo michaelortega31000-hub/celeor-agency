@@ -68,3 +68,24 @@
     applyCategoryPhotos();
   }
 })();
+
+/* --- Indicateur d'envoi partagé par tous les formulaires (08/09/2026) -----
+   Affiche immédiatement « Envoi en cours… » au clic, avant même que le
+   serveur réponde, puis rassure si l'attente dépasse 4 s.
+   Renvoie une fonction à appeler dès que la réponse arrive.            */
+window.celeorPending = function (msg, btn, texte) {
+  var libelle = btn ? btn.textContent : '';
+  var base = '<span class="cl-spin" aria-hidden="true"></span>' + (texte || 'Envoi en cours…');
+  if (btn) btn.textContent = 'Envoi en cours…';
+  msg.setAttribute('role', 'status');
+  msg.className = 'form-msg pending';
+  msg.innerHTML = base;
+  var relance = setTimeout(function () {
+    msg.innerHTML = base + ' <span style="opacity:.8">Encore quelques secondes, ne fermez pas la page.</span>';
+  }, 4000);
+  return function () {
+    clearTimeout(relance);
+    msg.removeAttribute('role');
+    if (btn) btn.textContent = libelle;
+  };
+};

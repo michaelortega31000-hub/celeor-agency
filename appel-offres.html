@@ -324,7 +324,8 @@ document.getElementById('ao-form').addEventListener('submit', async function(e){
   e.preventDefault();
   const form = this, btn = document.getElementById('f-submit'), msg = document.getElementById('form-msg');
   if(!selected.size){ msg.textContent = 'Sélectionnez au moins une prestation recherchée.'; msg.className = 'form-msg err'; return; }
-  btn.disabled = true; msg.className = 'form-msg';
+  btn.disabled = true;
+  const finPending = window.celeorPending(msg, btn, 'Envoi de votre appel d\'offres…');
   const data = Object.fromEntries(new FormData(form).entries());
   delete data._honey;
   try{
@@ -333,10 +334,12 @@ document.getElementById('ao-form').addEventListener('submit', async function(e){
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error('HTTP ' + r.status);
+    finPending(); msg.className = 'form-msg';
     msg.innerHTML = '✓ Votre appel d\'offres est enregistré. Celeor le diffuse aux prestataires correspondants : vous recevez leurs propositions sous 48 h, par email.';
     msg.classList.add('ok'); form.reset(); selected.clear(); refreshChips();
     window.scrollTo({top: msg.getBoundingClientRect().top + window.scrollY - 120, behavior:'smooth'});
   }catch(err){
+    finPending(); msg.className = 'form-msg';
     const corps = encodeURIComponent(Object.entries(data).filter(([k]) => !k.startsWith('_')).map(([k,v]) => k + ' : ' + v).join('\n'));
     msg.innerHTML = 'Envoi impossible pour le moment. <a href="mailto:' + CELEOR_FORM_EMAIL + '?subject=Appel d\'offres Celeor&body=' + corps + '">Cliquez ici pour envoyer par email</a>.';
     msg.classList.add('err');

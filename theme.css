@@ -265,3 +265,20 @@ html[data-theme="light"] .celeor-typing span { background: #A9AEB7; }
   .hero-tagline .tl-x { display: none; }
   .hero-tagline .tl-g { text-indent: 8px; }
 }
+
+/* --- Indicateur d'envoi des formulaires (08/09/2026) --------------------- */
+/* .form-msg est en display:none par défaut dans chaque page ; .pending est   */
+/* plus spécifique, il s'affiche donc quel que soit l'ordre des feuilles.     */
+.form-msg.pending{
+  display:block;
+  background:rgba(198,161,91,.12);
+  border:1px solid rgba(198,161,91,.40);
+  color:var(--gold2);
+}
+.cl-spin{
+  display:inline-block; width:13px; height:13px; margin-right:9px; vertical-align:-2px;
+  border:2px solid rgba(198,161,91,.30); border-top-color:var(--gold2);
+  border-radius:50%; animation:cl-spin .7s linear infinite;
+}
+@keyframes cl-spin{ to{ transform:rotate(360deg); } }
+@media (prefers-reduced-motion: reduce){ .cl-spin{ animation-duration:2.4s; } }

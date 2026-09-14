@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon espace — Celeor Agency</title>
+<meta name="description" content="Votre espace Celeor Agency : dossier de vérification, profil public, préférences.">
+<meta name="robots" content="noindex, nofollow">
+<script src="theme.js"></script>
+<link rel="stylesheet" href="compte.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="canonical" href="https://celeor-agency.com/espace.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <img src="logo.svg" alt="Celeor Agency" class="logo-img">
+  </a>
+  <div class="nav-right"><button class="btn-menu" id="menu-toggle" onclick="toggleMenu()" aria-label="Ouvrir le menu" aria-expanded="false"><span class="burger"><i></i><i></i><i></i></span><span class="btn-menu-label">Menu</span></button></div>
+</nav>
+<div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
+<div class="menu-panel" id="menu-panel" role="dialog" aria-label="Navigation du site">
+  <div class="menu-grid">
+    <div class="menu-col">
+      <div class="menu-col-title">Découvrir</div>
+      <a href="index.html#how">Comment ça marche<span>Le parcours en 4 étapes</span></a>
+      <a href="index.html#categories">Catégories<span>Musique, spectacle, photo, animation…</span></a>
+      <a href="catalogue.html">Catalogue complet<span>Tous les talents disponibles</span></a>
+    </div>
+    <div class="menu-col">
+      <div class="menu-col-title">Réserver</div>
+      <a href="appel-offres.html">Publier un appel d'offres<span>Décrivez votre événement, les talents répondent</span></a>
+      <a href="index.html#booking">Demander un devis<span>Réponse sous 24h</span></a>
+      <a href="contact.html">Nous contacter<span>Une question ? On répond</span></a>
+      <a href="contact.html?sujet=prestataire">Devenir prestataire<span>Rejoindre la communauté</span></a>
+      <a href="parrainage.html">Parrainage<span>Recommandez un talent, touchez une commission</span></a>
+    </div>
+    <div class="menu-col">
+      <div class="menu-col-title">Celeor Agency</div>
+      <a href="index.html#fondatrice">La fondatrice<span>Roxanne, CEO</span></a>
+      <a href="index.html#podcast">Podcast &amp; tarifs<span>Nos formules d'accompagnement</span></a>
+      <a href="legal.html">Mentions légales<span>CGU, confidentialité</span></a>
+    </div>
+  </div>
+</div>
+<script>
+function openMenu(){document.getElementById('menu-panel').classList.add('open');
+ document.getElementById('menu-overlay').classList.add('open');
+ var b=document.getElementById('menu-toggle');b.classList.add('is-open');b.setAttribute('aria-expanded','true');}
+function closeMenu(){document.getElementById('menu-panel').classList.remove('open');
+ document.getElementById('menu-overlay').classList.remove('open');
+ var b=document.getElementById('menu-toggle');b.classList.remove('is-open');b.setAttribute('aria-expanded','false');}
+function toggleMenu(){document.getElementById('menu-panel').classList.contains('open')?closeMenu():openMenu();}
+document.querySelectorAll('#menu-panel a').forEach(function(a){a.addEventListener('click',closeMenu);});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
+window.addEventListener('scroll',function(){if(document.getElementById('menu-panel').classList.contains('open'))closeMenu();},{passive:true});
+</script>
+
+
+<div class="page">
+  <div class="section-tag">Mon espace</div>
+  <h1 id="titre">Bonjour <span class="hl" id="w-prenom">…</span></h1>
+  <p class="page-sub" id="sous-titre">Chargement de votre espace…</p>
+
+  <div class="welcome">
+    <div class="who"><b id="w-nom"></b> <span id="w-email"></span></div>
+    <div class="btn-row" style="margin:0">
+      <a class="btn small gold hidden" id="btn-admin" href="admin.html">Administration</a>
+      <button class="btn small" type="button" onclick="window.celeor.signOut()">Déconnexion</button>
+    </div>
+  </div>
+
+  <!-- ── Nouveau mot de passe (après lien de réinitialisation) ── -->
+  <div class="form-card hidden" id="card-recovery">
+    <h2>Choisissez un nouveau mot de passe</h2>
+    <form id="recovery-form" novalidate>
+      <div class="frow">
+        <div><label>Nouveau mot de passe</label><input type="password" name="p1" minlength="8" autocomplete="new-password"></div>
+        <div><label>Confirmation</label><input type="password" name="p2" minlength="8" autocomplete="new-password"></div>
+      </div>
+      <button class="btn-submit" type="submit">Enregistrer le mot de passe</button>
+      <div class="form-msg" id="recovery-msg"></div>
+    </form>
+  </div>
+
+  <div class="steps" id="steps">
+
+    <!-- ── Étape 1 : vérification professionnelle ── -->
+    <div class="step-card hidden" id="card-verif">
+      <div class="step-head">
+        <h2><span class="step-num">1</span>Vérification de votre statut professionnel</h2>
+        <span class="badge draft" id="verif-badge">À faire</span>
+      </div>
+      <div id="verif-etat"></div>
+      <form id="verif-form" class="hidden" novalidate>
+        <label style="margin-bottom:10px">Votre situation</label>
+        <div class="choice" id="v-statut">
+          <button type="button" data-v="independant">Indépendant<small>auto-entrepreneur, micro, EI</small></button>
+          <button type="button" data-v="societe">Société<small>SASU, SAS, EURL, SARL…</small></button>
+          <button type="button" data-v="intermittent">Intermittent du spectacle<small>activité salariée</small></button>
+          <button type="button" data-v="les_deux">Les deux<small>selon les prestations</small></button>
+        </div>
+
+        <div id="v-pro" class="hidden">
+          <div class="frow">
+            <div><label>Nom de l'entreprise ou nom civil *</label><input type="text" name="raison_sociale"></div>
+            <div><label>Forme juridique *</label>
+              <select name="forme_juridique">
+                <option value="">Choisir…</option><option>Micro-entreprise</option><option>Entreprise individuelle</option>
+                <option>SASU</option><option>SAS</option><option>EURL</option><option>SARL</option><option>Association</option><option>Autre</option>
+              </select></div>
+          </div>
+          <div class="frow">
+            <div><label>SIREN * <span style="text-transform:none;letter-spacing:0;font-weight:400">(9 chiffres)</span></label><input type="text" name="siren" inputmode="numeric" maxlength="9" placeholder="123456789"></div>
+            <div><label>SIRET <span style="text-transform:none;letter-spacing:0;font-weight:400">(14 chiffres, si établissement précis)</span></label><input type="text" name="siret" inputmode="numeric" maxlength="14"></div>
+          </div>
+          <div class="frow full"><div><label>Activité déclarée * <span style="text-transform:none;letter-spacing:0;font-weight:400">(libellé ou code APE)</span></label><input type="text" name="activite" placeholder="Ex. : Arts du spectacle vivant — 90.01Z"></div></div>
+        </div>
+
+        <div id="v-inter" class="hidden">
+          <div class="frow">
+            <div><label>Votre rôle *</label>
+              <select name="role_intermittent">
+                <option value="">Choisir…</option><option>Artiste</option><option>Technicien</option><option>Régisseur</option>
+                <option>Son</option><option>Lumière</option><option>Production</option><option>Autre</option>
+              </select></div>
+            <div><label>Employeur ou production <span style="text-transform:none;letter-spacing:0;font-weight:400">(recommandé, jamais public)</span></label><input type="text" name="employeur"></div>
+          </div>
+        </div>
+
+        <div id="v-doc" class="hidden">
+          <div class="frow">
+            <div><label>Justificatif *</label><select name="type_justificatif" id="v-type"></select></div>
+            <div><label>Date du document / fin de période *</label><input type="date" name="document_date"></div>
+          </div>
+          <div class="frow full"><div><label>Fichier * <span style="text-transform:none;letter-spacing:0;font-weight:400">(PDF, JPG ou PNG, 10 Mo max)</span></label><input type="file" name="fichier" accept="application/pdf,image/jpeg,image/png"></div></div>
+          <div class="notice"><b>Avant l'envoi, masquez</b> les informations dont nous n'avons pas besoin : numéro de sécurité sociale, montant de votre rémunération, coordonnées bancaires. Un simple trait noir ou un post-it avant la photo suffit. Vos documents ne sont jamais publics et servent uniquement à cette vérification.</div>
+          <label class="check"><input type="checkbox" name="masque"> J'ai masqué les informations non nécessaires (numéro de sécurité sociale, salaire, RIB) sur le document que j'envoie.</label>
+          <p class="hint">Règle de fraîcheur Celeor : un document de moins de trois mois. Celeor conserve le résultat de la vérification et supprime automatiquement le fichier selon sa politique de conservation.</p>
+          <button class="btn-submit gold" type="submit" id="verif-submit">Envoyer mon dossier</button>
+        </div>
+        <div class="form-msg" id="verif-msg"></div>
+      </form>
+    </div>
+
+    <!-- ── Étape 2 : profil public ── -->
+    <div class="step-card hidden locked" id="card-profil">
+      <div class="step-head">
+        <h2><span class="step-num">2</span>Mon profil public</h2>
+        <span class="badge draft" id="profil-badge">Verrouillé</span>
+      </div>
+      <div id="profil-etat" class="hint">Cette étape se débloque une fois votre statut professionnel validé.</div>
+      <form id="profil-form" class="hidden" novalidate>
+        <div class="frow">
+          <div><label>Nom de scène / nom affiché *</label><input type="text" name="nom_scene"></div>
+          <div><label>Ville *</label><input type="text" name="ville" placeholder="Toulouse"></div>
+        </div>
+        <div class="frow three">
+          <div><label>Catégorie *</label><select name="categorie" id="p-cat"></select></div>
+          <div><label>Spécialité *</label><select name="sous_categorie" id="p-sub"></select></div>
+          <div><label>Département *</label><select name="departement" id="p-dep"></select></div>
+        </div>
+        <div class="frow">
+          <div><label>Tarif à partir de (€)</label><input type="text" name="tarif_a_partir" inputmode="numeric" placeholder="Ex. : 450"></div>
+          <div><label>Zone d'intervention</label><input type="text" name="zone" placeholder="Ex. : Occitanie, toute la France…"></div>
+        </div>
+        <div class="frow full"><div><label>Présentation *</label><textarea name="bio" placeholder="Qui vous êtes, ce que vous proposez, pour quels événements…"></textarea></div></div>
+        <div class="frow">
+          <div><label>Site web</label><input type="url" name="site" placeholder="https://"></div>
+          <div><label>Instagram</label><input type="text" name="instagram" placeholder="@votrecompte"></div>
+        </div>
+        <label>Prestations et tarifs <span style="text-transform:none;letter-spacing:0;font-weight:400">(jusqu'à 6)</span></label>
+        <div class="services-list" id="p-services"></div>
+        <button class="btn small" type="button" id="p-add-svc">+ Ajouter une prestation</button>
+        <div style="margin-top:18px">
+          <label>Photo principale</label>
+          <img id="p-photo-prev" class="photo-prev" alt="" src="">
+          <input type="file" name="photo" accept="image/jpeg,image/png,image/webp">
+          <p class="hint">JPG, PNG ou WebP, 5 Mo max. C'est la photo affichée sur votre fiche.</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" type="submit" id="profil-save">Enregistrer</button>
+          <button class="btn gold" type="button" id="profil-publish">Publier dans le catalogue</button>
+          <a class="btn hidden" id="profil-view" href="#" target="_blank" rel="noopener">Voir ma fiche</a>
+        </div>
+        <div class="form-msg" id="profil-msg"></div>
+      </form>
+    </div>
+
+    <!-- ── Organisateur ── -->
+    <div class="step-card hidden" id="card-orga">
+      <div class="step-head"><h2>Espace organisateur</h2><span class="badge draft">Bientôt</span></div>
+      <p class="hint">Vos appels d'offres et vos demandes de devis apparaîtront ici avec les réponses des prestataires. En attendant, tout continue de fonctionner par les formulaires du site :</p>
+      <div class="btn-row"><a class="btn" href="appel-offres.html">Publier un appel d'offres</a><a class="btn" href="index.html#booking">Demander un devis</a><a class="btn" href="catalogue.html">Parcourir le catalogue</a></div>
+    </div>
+
+    <!-- ── Informations & préférences ── -->
+    <div class="step-card" id="card-infos">
+      <div class="step-head"><h2>Mes informations et préférences</h2></div>
+      <form id="infos-form" novalidate>
+        <div class="frow three">
+          <div><label>Prénom</label><input type="text" name="prenom"></div>
+          <div><label>Nom</label><input type="text" name="nom"></div>
+          <div><label>Téléphone</label><input type="tel" name="telephone"></div>
+        </div>
+        <label class="check"><input type="checkbox" name="est_prestataire"> Je propose des prestations (artiste, prestataire)</label>
+        <label class="check"><input type="checkbox" name="est_organisateur"> J'organise des événements</label>
+        <div style="height:8px"></div>
+        <label class="check"><input type="checkbox" name="opt_in_produit"> Recevoir les mises à jour produit Celeor</label>
+        <label class="check"><input type="checkbox" name="opt_in_newsletter"> Recevoir la newsletter Celeor</label>
+        <div class="btn-row"><button class="btn primary" type="submit">Enregistrer</button></div>
+        <div class="form-msg" id="infos-msg"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Celeor Agency — <a href="index.html">Retour à l'accueil</a> · <a href="legal.html">Mentions légales &amp; confidentialité</a></footer>
+
+<script src="data.js"></script>
+<script src="celeor-auth.js"></script>
+<script>
+
+(function(){
+  var C, sb, uid, profil, verif = null, pub = null, statutPro = null, recovery = false;
+  var params = new URLSearchParams(location.search);
+  if(params.get('mode') === 'recovery' || /type=recovery/.test(location.hash)) recovery = true;
+
+  var DEPS = ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','2A','2B','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64','65','66','67','68','69','70','71','72','73','74','75','76','77','78','79','80','81','82','83','84','85','86','87','88','89','90','91','92','93','94','95','971','972','973','974','976'];
+  var TYPES_PRO = [['rne','Attestation d’immatriculation RNE'],['k','Extrait K'],['kbis','Extrait Kbis'],['sirene','Avis de situation SIRENE']];
+  var TYPES_INTER = [['aem','Attestation Employeur Mensuelle (AEM)'],['attestation_employeur','Attestation employeur'],['contrat','Contrat de travail'],['certificat','Certificat de travail'],['bulletin','Bulletin de salaire (rémunération masquée)']];
+  var LIB_STATUT = { draft:'Brouillon', submitted:'Envoyé — en attente', under_review:'En cours d’examen', approved:'Validé', action_required:'Correction demandée', rejected:'Refusé', expired:'À renouveler' };
+  var LIB_MOTIF = { document_missing:'aucun justificatif trouvé', document_unreadable:'document illisible ou incomplet', document_too_old:'document de plus de trois mois', identity_name_mismatch:'le nom du document ne correspond pas à votre compte', siren_or_siret_mismatch:'SIREN/SIRET différent du document', activity_not_demonstrated:'activité professionnelle récente non démontrée', sensitive_data_not_redacted:'des informations à masquer sont visibles (NIR, salaire, RIB)', other:'précision nécessaire' };
+
+  function $(id){ return document.getElementById(id); }
+  function msg(id, type, html){ var m=$(id); m.className='form-msg '+type; m.innerHTML=html; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function badge(el, statut, lib){ el.className = 'badge ' + statut; el.textContent = lib || LIB_STATUT[statut] || statut; }
+  function ext(file){ var m = /\.([a-z0-9]+)$/i.exec(file.name||''); var e = m ? m[1].toLowerCase() : ''; if(e==='jpeg') e='jpg'; return e; }
+  function uuid(){ return (crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36)+Math.random().toString(36).slice(2))); }
+
+  /* ── Récupération de mot de passe ── */
+  function initRecovery(){
+    $('card-recovery').classList.remove('hidden');
+    $('steps').classList.add('hidden');
+    $('recovery-form').addEventListener('submit', function(ev){
+      ev.preventDefault();
+      var f = ev.target;
+      if(f.p1.value.length < 8) return msg('recovery-msg','err','8 caractères minimum.');
+      if(f.p1.value !== f.p2.value) return msg('recovery-msg','err','Les deux mots de passe ne correspondent pas.');
+      msg('recovery-msg','pending','Enregistrement…');
+      sb.auth.updateUser({ password: f.p1.value }).then(function(r){
+        if(r.error) throw r.error;
+        msg('recovery-msg','ok','Mot de passe enregistré. Redirection…');
+        setTimeout(function(){ location.replace('espace.html'); }, 900);
+      }).catch(function(e){ msg('recovery-msg','err','Impossible d’enregistrer : '+esc(e.message)); });
+    });
+  }
+
+  /* ── En-tête ── */
+  function renderHead(){
+    var prenom = (profil && profil.prenom) || (C.user.email||'').split('@')[0];
+    $('w-prenom').textContent = prenom;
+    $('w-nom').textContent = profil ? ((profil.prenom||'')+' '+(profil.nom||'')).trim() : '';
+    $('w-email').textContent = '· ' + C.user.email;
+    if(C.isAdmin) $('btn-admin').classList.remove('hidden');
+    $('sous-titre').textContent = profil && profil.est_prestataire
+      ? 'Deux étapes pour apparaître dans le catalogue : la vérification de votre statut, puis votre profil public.'
+      : 'Retrouvez ici vos informations et vos préférences.';
+  }
+
+  /* ── Étape 1 : vérification ── */
+  function setStatut(v){
+    statutPro = v;
+    document.querySelectorAll('#v-statut button').forEach(function(b){ b.classList.toggle('active', b.dataset.v===v); });
+    var pro = (v==='independant'||v==='societe'||v==='les_deux'), inter = (v==='intermittent'||v==='les_deux');
+    $('v-pro').classList.toggle('hidden', !pro);
+    $('v-inter').classList.toggle('hidden', !inter);
+    $('v-doc').classList.toggle('hidden', !v);
+    var types = (pro?TYPES_PRO:[]).concat(inter?TYPES_INTER:[]);
+    $('v-type').innerHTML = '<option value="">Choisir…</option>' + types.map(function(t){ return '<option value="'+t[0]+'">'+t[1]+'</option>'; }).join('');
+    if(verif && verif.type_justificatif) $('v-type').value = verif.type_justificatif;
+  }
+  document.querySelectorAll('#v-statut button').forEach(function(b){ b.addEventListener('click', function(){ setStatut(b.dataset.v); }); });
+
+  function renderVerif(){
+    var card = $('card-verif'); card.classList.remove('hidden');
+    var f = $('verif-form'), etat = $('verif-etat');
+    var st = verif ? verif.statut : null;
+    badge($('verif-badge'), st || 'draft', st ? LIB_STATUT[st] : 'À faire');
+    f.classList.add('hidden'); etat.innerHTML = '';
+    if(!verif || st==='draft' || st==='action_required' || st==='expired'){
+      if(st==='action_required'){
+        etat.innerHTML = '<div class="notice"><b>Une correction est nécessaire :</b> ' + esc(LIB_MOTIF[verif.motif]||'précision nécessaire') + (verif.note_admin ? ' — <i>'+esc(verif.note_admin)+'</i>' : '') + '. Déposez un nouveau document ci-dessous.</div>';
+      } else if(st==='expired'){
+        etat.innerHTML = '<div class="notice"><b>Votre vérification a plus de douze mois.</b> Déposez un justificatif récent pour conserver votre badge « Profil vérifié ».</div>';
+      } else {
+        etat.innerHTML = '<p class="hint" style="margin-bottom:14px">Pour garantir la fiabilité des profils, Celeor vérifie un justificatif adapté à votre situation. <b>Indépendant, auto-entrepreneur ou entreprise :</b> attestation RNE, extrait K ou Kbis récent. <b>Intermittent du spectacle :</b> attestation employeur, AEM, contrat, certificat de travail ou bulletin de salaire récent. Aucune pièce d’identité n’est demandée à cette étape.</p>';
+      }
+      f.classList.remove('hidden');
+      if(verif){
+        setStatut(verif.statut_pro);
+        ['raison_sociale','forme_juridique','siren','siret','activite','role_intermittent','employeur','document_date'].forEach(function(k){ if(f[k] && verif[k]) f[k].value = verif[k]; });
+      }
+    } else if(st==='submitted' || st==='under_review'){
+      etat.innerHTML = '<div class="notice"><b>Dossier reçu.</b> Roxanne examine votre justificatif ; vous recevrez un e-mail dès la décision, en général sous 48 h ouvrées.</div>';
+    } else if(st==='approved'){
+      etat.innerHTML = '<div class="form-msg ok">✔ Statut professionnel validé' + (verif.expires_at ? ' jusqu’au ' + new Date(verif.expires_at).toLocaleDateString('fr-FR') : '') + '. Passez à l’étape 2 pour compléter et publier votre profil.</div>';
+    } else if(st==='rejected'){
+      etat.innerHTML = '<div class="form-msg err">Votre dossier n’a pas pu être validé. Si vous pensez qu’il s’agit d’une erreur, écrivez à <a href="mailto:contact@celeor-agency.com">contact@celeor-agency.com</a>.</div>';
+    }
+  }
+
+  $('verif-form').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var f = ev.target, btn = $('verif-submit');
+    if(!statutPro) return msg('verif-msg','err','Choisissez votre situation.');
+    var pro = (statutPro!=='intermittent'), inter = (statutPro!=='independant' && statutPro!=='societe');
+    var d = { statut_pro: statutPro, type_justificatif: f.type_justificatif.value || null, document_date: f.document_date.value || null };
+    if(pro){
+      d.raison_sociale = f.raison_sociale.value.trim(); d.forme_juridique = f.forme_juridique.value; d.siren = f.siren.value.replace(/\D/g,''); d.siret = f.siret.value.replace(/\D/g,'') || null; d.activite = f.activite.value.trim();
+      if(!d.raison_sociale || !d.forme_juridique || !d.activite) return msg('verif-msg','err','Nom, forme juridique et activité sont nécessaires.');
+      if(!/^\d{9}$/.test(d.siren)) return msg('verif-msg','err','Le SIREN doit comporter exactement 9 chiffres.');
+      if(d.siret && !/^\d{14}$/.test(d.siret)) return msg('verif-msg','err','Le SIRET doit comporter exactement 14 chiffres.');
+    } else { d.raison_sociale = null; d.forme_juridique = null; d.siren = null; d.siret = null; d.activite = null; }
+    if(inter){
+      d.role_intermittent = f.role_intermittent.value; d.employeur = f.employeur.value.trim() || null;
+      if(!d.role_intermittent) return msg('verif-msg','err','Indiquez votre rôle.');
+    } else { d.role_intermittent = null; d.employeur = null; }
+    if(!d.type_justificatif) return msg('verif-msg','err','Choisissez le type de justificatif.');
+    if(!d.document_date) return msg('verif-msg','err','Indiquez la date du document.');
+    var file = f.fichier.files[0];
+    if(!file) return msg('verif-msg','err','Ajoutez le fichier du justificatif.');
+    if(file.size > 10*1024*1024) return msg('verif-msg','err','Fichier trop lourd (10 Mo maximum).');
+    if(['pdf','jpg','png'].indexOf(ext(file)) < 0) return msg('verif-msg','err','Formats acceptés : PDF, JPG, PNG.');
+    if(!f.masque.checked) return msg('verif-msg','err','Confirmez que les informations non nécessaires sont masquées.');
+
+    btn.disabled = true; msg('verif-msg','pending','Envoi du dossier…');
+    var p;
+    if(verif && (verif.statut==='draft' || verif.statut==='action_required')){
+      d.statut = 'draft';
+      p = sb.from('verifications').update(d).eq('id', verif.id).select().single();
+    } else {
+      d.user_id = uid; d.statut = 'draft';
+      p = sb.from('verifications').insert(d).select().single();
+    }
+    p.then(function(r){
+      if(r.error) throw r.error;
+      verif = r.data;
+      var path = uid + '/' + verif.id + '/' + uuid() + '.' + ext(file);
+      return sb.storage.from('justificatifs').upload(path, file, { contentType: file.type || undefined, upsert: false }).then(function(u){
+        if(u.error) throw new Error('Le document n’a pas pu être déposé : ' + u.error.message);
+        return sb.from('verifications').update({ document_path: path, statut: 'submitted' }).eq('id', verif.id).select().single();
+      });
+    }).then(function(r){
+      if(r.error) throw r.error;
+      verif = r.data; f.reset();
+      msg('verif-msg','ok','Dossier envoyé. Vous recevrez un e-mail dès qu’il aura été examiné.');
+      setTimeout(renderVerif, 600);
+    }).catch(function(e){ msg('verif-msg','err', esc(e.message||e)); })
+      .then(function(){ btn.disabled = false; });
+  });
+
+  /* ── Étape 2 : profil public ── */
+  function fillCats(){
+    var cats = window.CELEOR_CATS || [];
+    $('p-cat').innerHTML = '<option value="">Choisir…</option>' + cats.map(function(c){ return '<option value="'+c.slug+'">'+esc(c.label)+'</option>'; }).join('');
+    $('p-dep').innerHTML = '<option value="">Choisir…</option>' + DEPS.map(function(d){ return '<option value="'+d+'">'+d+'</option>'; }).join('');
+    $('p-cat').addEventListener('change', fillSubs);
+  }
+  function fillSubs(){
+    var cat = window.celeorCat ? window.celeorCat($('p-cat').value) : null;
+    $('p-sub').innerHTML = '<option value="">Choisir…</option>' + (cat ? cat.subs.map(function(s){ return '<option value="'+s.slug+'">'+esc(s.label)+'</option>'; }).join('') : '');
+  }
+  function svcRow(name, price){
+    var d = document.createElement('div'); d.className = 'svc';
+    d.innerHTML = '<input type="text" placeholder="Prestation (ex. : DJ set 4h)" value="'+esc(name||'')+'"><input type="text" placeholder="Tarif (ex. : 600 €)" value="'+esc(price||'')+'"><button type="button" title="Retirer">✕</button>';
+    d.querySelector('button').addEventListener('click', function(){ d.remove(); });
+    $('p-services').appendChild(d);
+  }
+  $('p-add-svc').addEventListener('click', function(){ if($('p-services').children.length < 6) svcRow('',''); });
+
+  function renderProfil(){
+    var card = $('card-profil'); card.classList.remove('hidden');
+    var f = $('profil-form');
+    if(!pub){ card.classList.add('locked'); f.classList.add('hidden'); badge($('profil-badge'),'draft','Verrouillé'); return; }
+    card.classList.remove('locked'); f.classList.remove('hidden');
+    $('profil-etat').textContent = pub.publie ? 'Votre profil est visible dans le catalogue.' : 'Complétez votre profil puis publiez-le pour apparaître dans le catalogue.';
+    badge($('profil-badge'), pub.publie ? 'publie' : 'draft', pub.publie ? 'Publié' : 'Non publié');
+    f.nom_scene.value = pub.nom_scene || ''; f.ville.value = pub.ville || ''; f.tarif_a_partir.value = pub.tarif_a_partir || '';
+    f.zone.value = pub.zone || ''; f.bio.value = pub.bio || '';
+    f.site.value = (pub.liens && pub.liens.site) || ''; f.instagram.value = (pub.liens && pub.liens.instagram) || '';
+    $('p-cat').value = pub.categorie || ''; fillSubs(); $('p-sub').value = pub.sous_categorie || ''; $('p-dep').value = pub.departement || '';
+    $('p-services').innerHTML = ''; (Array.isArray(pub.services)?pub.services:[]).forEach(function(s){ svcRow(s.name, s.price); });
+    $('p-photo-prev').src = pub.photo_principale || ''; $('p-photo-prev').style.display = pub.photo_principale ? 'block' : 'none';
+    $('profil-publish').textContent = pub.publie ? 'Retirer du catalogue' : 'Publier dans le catalogue';
+    var v = $('profil-view'); v.classList.toggle('hidden', !pub.publie); v.href = 'fiche.html?id=' + encodeURIComponent(pub.slug);
+  }
+  function lireProfilForm(){
+    var f = $('profil-form');
+    var services = Array.from($('p-services').children).map(function(d){ var i=d.querySelectorAll('input'); return { name: i[0].value.trim(), price: i[1].value.trim() }; }).filter(function(s){ return s.name; });
+    return {
+      nom_scene: f.nom_scene.value.trim(), ville: f.ville.value.trim(), categorie: $('p-cat').value || null, sous_categorie: $('p-sub').value || null,
+      sous_categories: $('p-sub').value ? [$('p-sub').value] : [], departement: $('p-dep').value || null,
+      tarif_a_partir: f.tarif_a_partir.value.replace(/[^\d]/g,'') || null, zone: f.zone.value.trim() || null, bio: f.bio.value.trim(),
+      liens: { site: f.site.value.trim() || null, instagram: f.instagram.value.trim() || null }, services: services
+    };
+  }
+  function validerProfil(d){
+    if(!d.nom_scene) return 'Le nom affiché est nécessaire.';
+    if(!d.ville) return 'Indiquez votre ville.';
+    if(!d.categorie || !d.sous_categorie) return 'Choisissez une catégorie et une spécialité.';
+    if(!d.departement) return 'Choisissez votre département.';
+    if(!d.bio || d.bio.length < 40) return 'Votre présentation doit faire au moins quelques lignes (40 caractères).';
+    return null;
+  }
+  function uploadPhoto(){
+    var file = $('profil-form').photo.files[0];
+    if(!file) return Promise.resolve(null);
+    if(file.size > 5*1024*1024) return Promise.reject(new Error('Photo trop lourde (5 Mo maximum).'));
+    var path = uid + '/photo-' + Date.now() + '.' + (ext(file) || 'jpg');
+    return sb.storage.from('medias').upload(path, file, { contentType: file.type || undefined, upsert: true }).then(function(u){
+      if(u.error) throw new Error('Photo non enregistrée (' + u.error.message + '). Le reste du profil est sauvegardé.');
+      return sb.storage.from('medias').getPublicUrl(path).data.publicUrl;
+    });
+  }
+  function saveProfil(publier){
+    var d = lireProfilForm(), err = validerProfil(d);
+    if(err) return msg('profil-msg','err',err);
+    var btn = $('profil-save'), btnP = $('profil-publish');
+    btn.disabled = btnP.disabled = true; msg('profil-msg','pending','Enregistrement…');
+    var photoErr = null;
+    uploadPhoto().catch(function(e){ photoErr = e.message; return null; }).then(function(url){
+      if(url) d.photo_principale = url;
+      if(publier !== undefined) d.publie = publier;
+      return sb.from('profils_publics').update(d).eq('user_id', uid).select().single();
+    }).then(function(r){
+      if(r.error) throw r.error;
+      pub = r.data; renderProfil();
+      msg('profil-msg', photoErr ? 'info' : 'ok', (pub.publie ? 'Profil enregistré et publié.' : 'Profil enregistré.') + (photoErr ? ' ' + esc(photoErr) : ''));
+    }).catch(function(e){ msg('profil-msg','err', esc(e.message||e)); })
+      .then(function(){ btn.disabled = btnP.disabled = false; });
+  }
+  $('profil-form').addEventListener('submit', function(ev){ ev.preventDefault(); saveProfil(); });
+  $('profil-publish').addEventListener('click', function(){ saveProfil(!pub.publie); });
+
+  /* ── Infos & préférences ── */
+  function renderInfos(){
+    var f = $('infos-form'); if(!profil) return;
+    f.prenom.value = profil.prenom||''; f.nom.value = profil.nom||''; f.telephone.value = profil.telephone||'';
+    f.est_prestataire.checked = !!profil.est_prestataire; f.est_organisateur.checked = !!profil.est_organisateur;
+    f.opt_in_produit.checked = !!profil.opt_in_produit; f.opt_in_newsletter.checked = !!profil.opt_in_newsletter;
+  }
+  $('infos-form').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var f = ev.target;
+    var d = { prenom: f.prenom.value.trim(), nom: f.nom.value.trim(), telephone: f.telephone.value.trim() || null,
+              est_prestataire: f.est_prestataire.checked, est_organisateur: f.est_organisateur.checked,
+              opt_in_produit: f.opt_in_produit.checked, opt_in_newsletter: f.opt_in_newsletter.checked };
+    if((d.opt_in_produit && !profil.opt_in_produit) || (d.opt_in_newsletter && !profil.opt_in_newsletter)) d.opt_in_le = new Date().toISOString();
+    msg('infos-msg','pending','Enregistrement…');
+    sb.from('profils').update(d).eq('user_id', uid).select().single().then(function(r){
+      if(r.error) throw r.error;
+      profil = r.data; C.profil = profil; renderHead(); renderAll();
+      msg('infos-msg','ok','Informations enregistrées.');
+    }).catch(function(e){ msg('infos-msg','err', esc(e.message||e)); });
+  });
+
+  /* ── Orchestration ── */
+  function renderAll(){
+    var presta = profil && profil.est_prestataire, orga = profil && profil.est_organisateur;
+    $('card-verif').classList.toggle('hidden', !presta && !verif);
+    $('card-profil').classList.toggle('hidden', !presta && !pub);
+    $('card-orga').classList.toggle('hidden', !orga);
+    if(presta || verif) renderVerif();
+    if(presta || pub) renderProfil();
+    renderInfos();
+  }
+  function charger(){
+    return Promise.all([
+      sb.from('verifications').select('*').eq('user_id', uid).order('created_at', { ascending:false }).limit(1),
+      sb.from('profils_publics').select('*').eq('user_id', uid).maybeSingle()
+    ]).then(function(rs){
+      verif = (rs[0].data && rs[0].data[0]) || null;
+      pub = rs[1].data || null;
+    });
+  }
+
+  window.celeor.requireAuth().then(function(c){
+    C = c; sb = C.sb; uid = C.user.id; profil = C.profil;
+    fillCats();
+    if(recovery){ initRecovery(); }
+    sb.auth.onAuthStateChange(function(ev){ if(ev==='PASSWORD_RECOVERY' && !recovery){ recovery = true; initRecovery(); } });
+    var p = profil ? Promise.resolve() : C.refreshProfil().then(function(pr){ profil = pr; });
+    p.then(charger).then(function(){ renderHead(); renderAll(); })
+     .catch(function(e){ $('sous-titre').textContent = 'Impossible de charger votre espace : ' + (e.message||e); });
+  });
+})();
+
+</script>
+<script src="assistant.js"></script>
+</body>
+</html>

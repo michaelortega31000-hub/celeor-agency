@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion — Celeor Agency</title>
+<meta name="description" content="Connectez-vous ou créez votre compte Celeor Agency : prestataires, artistes et organisateurs d'événements.">
+<meta name="robots" content="noindex, follow">
+<script src="theme.js"></script>
+<link rel="stylesheet" href="compte.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="canonical" href="https://celeor-agency.com/connexion.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <img src="logo.svg" alt="Celeor Agency" class="logo-img">
+  </a>
+  <div class="nav-right"><button class="btn-menu" id="menu-toggle" onclick="toggleMenu()" aria-label="Ouvrir le menu" aria-expanded="false"><span class="burger"><i></i><i></i><i></i></span><span class="btn-menu-label">Menu</span></button></div>
+</nav>
+<div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
+<div class="menu-panel" id="menu-panel" role="dialog" aria-label="Navigation du site">
+  <div class="menu-grid">
+    <div class="menu-col">
+      <div class="menu-col-title">Découvrir</div>
+      <a href="index.html#how">Comment ça marche<span>Le parcours en 4 étapes</span></a>
+      <a href="index.html#categories">Catégories<span>Musique, spectacle, photo, animation…</span></a>
+      <a href="catalogue.html">Catalogue complet<span>Tous les talents disponibles</span></a>
+    </div>
+    <div class="menu-col">
+      <div class="menu-col-title">Réserver</div>
+      <a href="appel-offres.html">Publier un appel d'offres<span>Décrivez votre événement, les talents répondent</span></a>
+      <a href="index.html#booking">Demander un devis<span>Réponse sous 24h</span></a>
+      <a href="contact.html">Nous contacter<span>Une question ? On répond</span></a>
+      <a href="contact.html?sujet=prestataire">Devenir prestataire<span>Rejoindre la communauté</span></a>
+      <a href="parrainage.html">Parrainage<span>Recommandez un talent, touchez une commission</span></a>
+    </div>
+    <div class="menu-col">
+      <div class="menu-col-title">Celeor Agency</div>
+      <a href="index.html#fondatrice">La fondatrice<span>Roxanne, CEO</span></a>
+      <a href="index.html#podcast">Podcast &amp; tarifs<span>Nos formules d'accompagnement</span></a>
+      <a href="legal.html">Mentions légales<span>CGU, confidentialité</span></a>
+    </div>
+  </div>
+</div>
+<script>
+function openMenu(){document.getElementById('menu-panel').classList.add('open');
+ document.getElementById('menu-overlay').classList.add('open');
+ var b=document.getElementById('menu-toggle');b.classList.add('is-open');b.setAttribute('aria-expanded','true');}
+function closeMenu(){document.getElementById('menu-panel').classList.remove('open');
+ document.getElementById('menu-overlay').classList.remove('open');
+ var b=document.getElementById('menu-toggle');b.classList.remove('is-open');b.setAttribute('aria-expanded','false');}
+function toggleMenu(){document.getElementById('menu-panel').classList.contains('open')?closeMenu():openMenu();}
+document.querySelectorAll('#menu-panel a').forEach(function(a){a.addEventListener('click',closeMenu);});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
+window.addEventListener('scroll',function(){if(document.getElementById('menu-panel').classList.contains('open'))closeMenu();},{passive:true});
+</script>
+
+
+<div class="page">
+  <div class="section-tag">Votre compte</div>
+  <h1>Bienvenue sur <span class="hl">Celeor</span></h1>
+  <p class="page-sub">Un seul compte, que vous soyez artiste, prestataire ou organisateur. Roxanne et son équipe valident chaque profil professionnel.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" id="tab-login" onclick="showPane('login')">Se connecter</button>
+    <button class="tab gold" id="tab-signup" onclick="showPane('signup')">Créer un compte</button>
+  </div>
+
+  <!-- ── Connexion ── -->
+  <div class="form-card" id="pane-login">
+    <form id="login-form" novalidate>
+      <div class="frow full"><div><label>E-mail</label><input type="email" name="email" required autocomplete="email" placeholder="vous@exemple.com"></div></div>
+      <div class="frow full"><div><label>Mot de passe</label><input type="password" name="password" required autocomplete="current-password" placeholder="••••••••"></div></div>
+      <button class="btn-submit" type="submit">Se connecter</button>
+      <div class="form-msg" id="login-msg"></div>
+    </form>
+    <p class="hint" style="text-align:center;margin-top:16px"><a href="#" onclick="showPane('reset');return false;" style="color:var(--gold2)">Mot de passe oublié ?</a></p>
+  </div>
+
+  <!-- ── Inscription ── -->
+  <div class="form-card hidden" id="pane-signup">
+    <form id="signup-form" novalidate>
+      <label style="margin-bottom:10px">Vous êtes</label>
+      <div class="choice" id="role-choice">
+        <button type="button" data-role="prestataire" class="active">🎤 Artiste / prestataire<small>Je propose mes prestations</small></button>
+        <button type="button" data-role="organisateur">🎉 Organisateur<small>Je cherche des talents</small></button>
+        <button type="button" data-role="les_deux">Les deux<small>Selon les projets</small></button>
+      </div>
+      <div class="frow">
+        <div><label>Prénom *</label><input type="text" name="prenom" required autocomplete="given-name"></div>
+        <div><label>Nom *</label><input type="text" name="nom" required autocomplete="family-name"></div>
+      </div>
+      <div class="frow">
+        <div><label>E-mail *</label><input type="email" name="email" required autocomplete="email" placeholder="vous@exemple.com"></div>
+        <div><label>Téléphone</label><input type="tel" name="telephone" autocomplete="tel" placeholder="06 12 34 56 78"></div>
+      </div>
+      <div class="frow full"><div><label>Mot de passe * <span style="text-transform:none;letter-spacing:0;font-weight:400">(8 caractères minimum)</span></label><input type="password" name="password" required minlength="8" autocomplete="new-password"></div></div>
+      <label class="check"><input type="checkbox" name="opt_in_produit"> Recevoir les mises à jour produit Celeor : évolutions du site, nouvelles fonctionnalités et informations liées à votre utilisation de Celeor.</label>
+      <label class="check"><input type="checkbox" name="opt_in_newsletter"> Recevoir la newsletter Celeor : conseils, contenus, opportunités et actualités susceptibles de vous intéresser.</label>
+      <p class="hint">Ces deux choix sont indépendants et modifiables à tout moment depuis votre espace. Les messages nécessaires au fonctionnement de votre compte (confirmation, validation de dossier) sont envoyés dans tous les cas. En créant un compte, vous acceptez les <a href="legal.html" style="color:var(--gold2)">conditions d'utilisation et la politique de confidentialité</a>.</p>
+      <button class="btn-submit gold" type="submit">Créer mon compte</button>
+      <div class="form-msg" id="signup-msg"></div>
+    </form>
+  </div>
+
+  <!-- ── Mot de passe oublié ── -->
+  <div class="form-card hidden" id="pane-reset">
+    <h2>Réinitialiser le mot de passe</h2>
+    <p class="hint" style="margin-bottom:14px">Indiquez votre e-mail : vous recevrez un lien pour choisir un nouveau mot de passe.</p>
+    <form id="reset-form" novalidate>
+      <div class="frow full"><div><label>E-mail</label><input type="email" name="email" required autocomplete="email"></div></div>
+      <button class="btn-submit" type="submit">Envoyer le lien</button>
+      <div class="form-msg" id="reset-msg"></div>
+    </form>
+    <p class="hint" style="text-align:center;margin-top:16px"><a href="#" onclick="showPane('login');return false;" style="color:var(--gold2)">← Retour à la connexion</a></p>
+  </div>
+</div>
+
+<footer>© 2026 Celeor Agency — <a href="index.html">Retour à l'accueil</a> · <a href="legal.html">Mentions légales &amp; confidentialité</a></footer>
+
+<script src="data.js"></script>
+<script src="celeor-auth.js"></script>
+<script>
+
+(function(){
+  var SITE = 'https://celeor-agency.com/';
+  var params = new URLSearchParams(location.search);
+  var next = params.get('next') || 'espace.html';
+  if(!/^[a-z0-9\-]+\.html(\?.*)?$/i.test(next)) next = 'espace.html';
+
+  window.showPane = function(p){
+    ['login','signup','reset'].forEach(function(k){
+      var pane = document.getElementById('pane-'+k); if(pane) pane.classList.toggle('hidden', k!==p);
+      var tab = document.getElementById('tab-'+k); if(tab) tab.classList.toggle('active', k===p);
+    });
+    if(p==='reset') document.getElementById('tab-login').classList.add('active');
+  };
+  if(location.hash==='#inscription') showPane('signup');
+  if(location.hash==='#reset') showPane('reset');
+
+  var role = 'prestataire';
+  document.querySelectorAll('#role-choice button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#role-choice button').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active'); role = b.dataset.role;
+    });
+  });
+
+  function msg(id, type, html){ var m=document.getElementById(id); m.className='form-msg '+type; m.innerHTML=html; }
+  function traduire(e){
+    var t = (e && e.message) || '';
+    if(/invalid login credentials/i.test(t)) return 'E-mail ou mot de passe incorrect.';
+    if(/email not confirmed/i.test(t)) return 'Votre adresse n’a pas encore été confirmée : ouvrez le mail reçu à l’inscription (vérifiez vos courriers indésirables).';
+    if(/already registered|already been registered/i.test(t)) return 'Un compte existe déjà avec cet e-mail. Connectez-vous, ou utilisez « Mot de passe oublié ».';
+    if(/password/i.test(t) && /short|least/i.test(t)) return 'Le mot de passe doit contenir au moins 8 caractères.';
+    if(/rate limit|too many/i.test(t)) return 'Trop de tentatives. Patientez quelques minutes avant de réessayer.';
+    if(/valid email/i.test(t)) return 'Adresse e-mail invalide.';
+    return 'Une erreur est survenue : ' + (t || 'réessayez dans un instant.');
+  }
+
+  // Déjà connecté ? on passe directement à la suite.
+  window.celeor.ready.then(function(C){ if(C.user) location.replace(next); });
+
+  document.getElementById('login-form').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var f = ev.target, btn = f.querySelector('.btn-submit');
+    if(!f.email.value || !f.password.value){ msg('login-msg','err','Renseignez votre e-mail et votre mot de passe.'); return; }
+    btn.disabled = true; msg('login-msg','pending','Connexion en cours…');
+    window.celeor.ready.then(function(C){
+      return C.sb.auth.signInWithPassword({ email: f.email.value.trim(), password: f.password.value });
+    }).then(function(r){
+      if(r.error) throw r.error;
+      msg('login-msg','ok','Connecté. Redirection…');
+      location.replace(next);
+    }).catch(function(e){ msg('login-msg','err',traduire(e)); btn.disabled=false; });
+  });
+
+  document.getElementById('signup-form').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var f = ev.target, btn = f.querySelector('.btn-submit');
+    if(!f.prenom.value.trim() || !f.nom.value.trim() || !f.email.value.trim() || f.password.value.length < 8){
+      msg('signup-msg','err','Prénom, nom, e-mail et un mot de passe d’au moins 8 caractères sont nécessaires.'); return;
+    }
+    btn.disabled = true; msg('signup-msg','pending','Création du compte…');
+    window.celeor.ready.then(function(C){
+      return C.sb.auth.signUp({
+        email: f.email.value.trim(), password: f.password.value,
+        options: {
+          emailRedirectTo: SITE + 'espace.html',
+          data: {
+            prenom: f.prenom.value.trim(), nom: f.nom.value.trim(), telephone: f.telephone.value.trim() || null,
+            est_prestataire: role !== 'organisateur', est_organisateur: role !== 'prestataire',
+            opt_in_produit: f.opt_in_produit.checked, opt_in_newsletter: f.opt_in_newsletter.checked
+          }
+        }
+      });
+    }).then(function(r){
+      if(r.error) throw r.error;
+      var u = r.data && r.data.user;
+      if(u && u.identities && u.identities.length === 0){
+        throw new Error('already registered');
+      }
+      if(r.data && r.data.session){ location.replace(next); return; }
+      msg('signup-msg','ok','<b>Compte créé.</b> Un e-mail de confirmation vient de vous être envoyé par Celeor Agency : cliquez sur le lien qu’il contient pour activer votre compte, puis connectez-vous. Pensez à vérifier vos courriers indésirables.');
+      f.reset();
+    }).catch(function(e){ msg('signup-msg','err',traduire(e)); btn.disabled=false; });
+  });
+
+  document.getElementById('reset-form').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var f = ev.target, btn = f.querySelector('.btn-submit');
+    if(!f.email.value.trim()){ msg('reset-msg','err','Indiquez votre e-mail.'); return; }
+    btn.disabled = true; msg('reset-msg','pending','Envoi…');
+    window.celeor.ready.then(function(C){
+      return C.sb.auth.resetPasswordForEmail(f.email.value.trim(), { redirectTo: SITE + 'espace.html?mode=recovery' });
+    }).then(function(r){
+      if(r.error) throw r.error;
+      msg('reset-msg','ok','Si un compte existe avec cette adresse, un lien de réinitialisation vient d’être envoyé.');
+    }).catch(function(e){ msg('reset-msg','err',traduire(e)); }).then(function(){ btn.disabled=false; });
+  });
+})();
+
+</script>
+<script src="assistant.js"></script>
+</body>
+</html>

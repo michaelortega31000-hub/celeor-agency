@@ -66,6 +66,21 @@
         nr.insertBefore(b, a);
       }
     }
+    // Page d'accueil : boutons Connexion / S'inscrire déjà présents dans le header
+    var cta = document.querySelector('nav .nav-cta');
+    if (cta) {
+      var btns = cta.querySelectorAll('.nav-account');
+      if (btns.length >= 2) {
+        if (C.user) {
+          btns[0].textContent = 'Mon espace'; btns[0].onclick = function () { location.href = 'espace.html'; };
+          if (C.isAdmin) { btns[1].textContent = 'Administration'; btns[1].onclick = function () { location.href = 'admin.html'; }; }
+          else { btns[1].textContent = 'Déconnexion'; btns[1].onclick = function () { C.signOut(); }; }
+        } else {
+          btns[0].textContent = 'Connexion'; btns[0].onclick = function () { location.href = 'connexion.html'; };
+          btns[1].textContent = 'S\'inscrire'; btns[1].onclick = function () { location.href = 'connexion.html#inscription'; };
+        }
+      }
+    }
     // Bloc compte du menu (présent sur la page d'accueil)
     var ma = document.querySelector('.menu-account');
     if (ma) {

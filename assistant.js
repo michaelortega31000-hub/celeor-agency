@@ -214,5 +214,5 @@
 
 // Load chatbot widget
 if(!document.querySelector('script[src="chatbot.js"]')){
-var s=document.createElement('script');s.src='chatbot.js';document.body.appendChild(s);
+var s=document.createElement('script');s.src='chatbot.js';document.body.appendChild(s);}if(!document.querySelector('script[src="celeor-auth.js"]')){var ca=document.createElement('script');ca.src='celeor-auth.js';document.body.appendChild(ca);
 }

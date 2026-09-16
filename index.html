@@ -1702,7 +1702,7 @@ document.getElementById('booking-form').addEventListener('submit', async functio
   const form = this, btn = form.querySelector('.btn-submit'), msg = document.getElementById('booking-form-msg');
   btn.disabled = true;
   const finPending = window.celeorPending(msg, btn, 'Envoi de votre demande…');
-  const data = Object.fromEntries(new FormData(form).entries());
+  const data = Object.fromEntries(new FormData(form).entries()); if(window.CeleorDB) CeleorDB.saveDemande(data,'booking');
   try{
     const r = await fetch('https://formsubmit.co/ajax/' + CELEOR_FORM_EMAIL, {
       method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
@@ -1817,7 +1817,7 @@ const counterObs = new IntersectionObserver(entries => {
     counterObs.unobserve(el);
   });
 }, { threshold: .5 });
-counters.forEh(el => counterObs.observe(el));
+counters.forEach(el => counterObs.observe(el));
 
 // ── TILT 3D ────────────────────────────────────────────────────────
 document.querySelectorAll('[data-tilt]').forEach(card => {
@@ -1837,6 +1837,6 @@ document.querySelectorAll('[data-tilt]').forEach(card => {
 </script>
 <script src="data.js"></script>
 <script src="assistant.js"></script>
-<script src="chatbot.js"></script><script src="logo-intro.js"></script>
+<script src="chatbot.js"></script><script src="logo-intro.js"></script><script src="celeor-db.js"></script>
 </body>
 </html>

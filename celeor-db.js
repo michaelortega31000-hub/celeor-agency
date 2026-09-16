@@ -35,6 +35,7 @@
 
   // Formulaire réservation (index) ou contact organisateur (contact.html)
   function saveDemande(d, origine) {
+    if (d && d._honey) return Promise.resolve({ ok: false, err: 'honeypot' });
     const extras = [];
     if (d.talent) extras.push('Talent recherché : ' + d.talent);
     if (d.code_parrain) extras.push('Code parrain : ' + d.code_parrain);
@@ -55,6 +56,7 @@
 
   // Formulaire appel d'offres (appel-offres.html)
   function saveAppelOffres(d) {
+    if (d && d._honey) return Promise.resolve({ ok: false, err: 'honeypot' });
     return insert('appels_offres', {
       organisateur: clean(d.nom) || 'Sans nom',
       email: clean(d.email) || 'inconnu@celeor-agency.com',
@@ -73,6 +75,7 @@
 
   // Candidature talent / prestataire (contact.html, switch "Je suis prestataire")
   function saveCandidature(d) {
+    if (d && d._honey) return Promise.resolve({ ok: false, err: 'honeypot' });
     const extras = [];
     if (d.liens) extras.push('Liens : ' + d.liens);
     if (d.code_parrain) extras.push('Code parrain : ' + d.code_parrain);

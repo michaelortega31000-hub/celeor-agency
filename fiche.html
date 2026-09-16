@@ -212,7 +212,7 @@ function initials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUppe
 function starStr(r){return '★★★★★'.slice(0,r)+'☆☆☆☆☆'.slice(0,5-r);}
 
 const id = qp('id');
-const P = (window.CELEOR_DATA||[]).find(x=>x.id===id) || (window.CELEOR_DATA||[])[0];
+let P = (window.CELEOR_DATA||[]).find(x=>x.id===id) || (window.CELEOR_DATA||[])[0];
 
 let viewDate = new Date(); viewDate.setDate(1);
 let selected = null;

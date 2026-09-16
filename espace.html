@@ -86,6 +86,20 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
     </form>
   </div>
 
+  <!-- ── Activation du compte / lien reçu par email (anti-robots : le lien n'est utilisé qu'au clic) ── -->
+  <div class="form-card hidden" id="card-activation">
+    <h2>Activer mon accès</h2>
+    <p class="page-sub" style="margin:0 0 14px">Cliquez sur le bouton pour valider votre lien, puis choisissez votre mot de passe.</p>
+    <button class="btn-submit" type="button" id="btn-activation">Continuer</button>
+    <div class="form-msg" id="activation-msg"></div>
+  </div>
+
+  <!-- ── Lien expiré ou déjà utilisé ── -->
+  <div class="form-card hidden" id="card-lien-erreur">
+    <h2>Ce lien n’est plus valide</h2>
+    <p class="page-sub" style="margin:0">Il a expiré ou a déjà été utilisé. Demandez une nouvelle invitation à Celeor Agency, ou utilisez « Mot de passe oublié » sur la <a href="connexion.html">page de connexion</a>.</p>
+  </div>
+
   <div class="steps" id="steps">
 
     <!-- ── Étape 1 : vérification professionnelle ── -->
@@ -487,6 +501,41 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
       verif = (rs[0].data && rs[0].data[0]) || null;
       pub = rs[1].data || null;
     });
+  }
+
+  /* ── Lien reçu par email : vérifié seulement au clic (les robots des messageries ne le consomment plus) ── */
+  var tokenHash = params.get('token_hash'), otpType = params.get('type');
+  var lienErreur = new URLSearchParams(location.hash.replace(/^#/, '')).get('error_description');
+  function ecranLien(titre, sous){
+    $('titre').textContent = titre; $('sous-titre').textContent = sous;
+    document.querySelector('.welcome').classList.add('hidden');
+    $('steps').classList.add('hidden');
+  }
+  if(tokenHash && (otpType === 'invite' || otpType === 'recovery')){
+    ecranLien(otpType === 'invite' ? 'Bienvenue sur Celeor' : 'Nouveau mot de passe', 'Encore une étape.');
+    $('card-activation').classList.remove('hidden');
+    $('btn-activation').addEventListener('click', function(){
+      var btn = this; btn.disabled = true;
+      msg('activation-msg','pending','Vérification du lien…');
+      window.celeor.ready.then(function(c){
+        if(!c.sb) throw new Error('service indisponible');
+        return c.sb.auth.signOut({ scope: 'local' }).catch(function(){}).then(function(){
+          return c.sb.auth.verifyOtp({ token_hash: tokenHash, type: otpType });
+        });
+      }).then(function(r){
+        if(r.error) throw r.error;
+        location.replace('espace.html?mode=recovery');
+      }).catch(function(){
+        $('card-activation').classList.add('hidden');
+        $('card-lien-erreur').classList.remove('hidden');
+      });
+    });
+    return;
+  }
+  if(lienErreur){
+    ecranLien('Lien expiré', 'Aucune modification n’a été faite.');
+    $('card-lien-erreur').classList.remove('hidden');
+    return;
   }
 
   window.celeor.requireAuth().then(function(c){

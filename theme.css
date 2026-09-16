@@ -282,3 +282,7 @@ html[data-theme="light"] .celeor-typing span { background: #A9AEB7; }
 }
 @keyframes cl-spin{ to{ transform:rotate(360deg); } }
 @media (prefers-reduced-motion: reduce){ .cl-spin{ animation-duration:2.4s; } }
+
+/* Mobile : aucun débordement horizontal (16/09/2026) */
+.fondatrice-section{ overflow-x:hidden; overflow-x:clip; }
+@media (max-width:420px){ nav .nav-right .btn-primary{ display:none; } }

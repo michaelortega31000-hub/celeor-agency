@@ -235,7 +235,7 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
 
 <footer>© 2026 Celeor Agency — <a href="index.html">Retour à l'accueil</a></footer>
 
-<script src="data.js"></script>
+<script src="data.js"></script><script src="celeor-db.js"></script>
 <script>
   const CELEOR_FORM_EMAIL = 'contact@celeor-agency.com';
 
@@ -297,7 +297,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   const form = this, btn = document.getElementById('f-submit'), msg = document.getElementById('form-msg');
   btn.disabled = true;
   const finPending = window.celeorPending(msg, btn, 'Envoi de votre demande…');
-  const data = Object.fromEntries(new FormData(form).entries());
+  const data = Object.fromEntries(new FormData(form).entries()); if(window.CeleorDB) CeleorDB.saveDemande(data,'contact');
   try{
     const r = await fetch('https://formsubmit.co/ajax/' + CELEOR_FORM_EMAIL, {
       method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},

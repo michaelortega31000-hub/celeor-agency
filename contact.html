@@ -297,7 +297,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   const form = this, btn = document.getElementById('f-submit'), msg = document.getElementById('form-msg');
   btn.disabled = true;
   const finPending = window.celeorPending(msg, btn, 'Envoi de votre demande…');
-  const data = Object.fromEntries(new FormData(form).entries()); if(window.CeleorDB) CeleorDB.saveDemande(data,'contact');
+  const data = Object.fromEntries(new FormData(form).entries()); if(window.CeleorDB){ if(data.profil==='prestataire') CeleorDB.saveCandidature(data); else CeleorDB.saveDemande(data,'contact'); }
   try{
     const r = await fetch('https://formsubmit.co/ajax/' + CELEOR_FORM_EMAIL, {
       method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},

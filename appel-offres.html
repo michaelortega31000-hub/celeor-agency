@@ -327,7 +327,7 @@ document.getElementById('ao-form').addEventListener('submit', async function(e){
   btn.disabled = true;
   const finPending = window.celeorPending(msg, btn, 'Envoi de votre appel d\'offres…');
   const data = Object.fromEntries(new FormData(form).entries());
-  delete data._honey; if(window.CeleorDB) CeleorDB.saveAppelOffres(data);
+  if(window.CeleorDB) CeleorDB.saveAppelOffres(data);
   try{
     const r = await fetch('https://formsubmit.co/ajax/' + CELEOR_FORM_EMAIL, {
       method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},

@@ -84,7 +84,7 @@
   var body = document.body;
   body.classList.add('logo-intro');
   body.classList.add('logo-intro-hide');
-  var stage = null, started = false, finished = false, timers = [];
+  var stage = null, clip = null, started = false, finished = false, timers = [];
 
   function later(fn, s) { timers.push(setTimeout(fn, s * 1000)); }
 
@@ -98,6 +98,7 @@
     stage.style.top = (r.top + sy) + 'px';
     stage.style.width = r.width + 'px';
     stage.style.height = r.height + 'px';
+    if (clip) clip.style.height = Math.max(document.documentElement.clientHeight, r.bottom + sy) + 'px';
     var w = r.width, h = r.height;
     var kids = stage.querySelectorAll('.lp');
     for (var i = 0; i < kids.length; i++) {
@@ -134,7 +135,13 @@
     var shine = document.createElement('div'); shine.className = 'shine';
     shine.style.webkitMaskImage = src; shine.style.maskImage = src;
     stage.appendChild(shine);
-    body.appendChild(stage);
+    // Conteneur qui masque les morceaux hors écran : sans lui, sur mobile, la page s'élargit pendant l'intro
+    clip = document.createElement('div');
+    clip.id = 'logo-intro-clip';
+    clip.setAttribute('aria-hidden', 'true');
+    clip.style.cssText = 'position:absolute;left:0;top:0;width:100%;overflow:hidden;pointer-events:none;z-index:100001';
+    clip.appendChild(stage);
+    body.appendChild(clip);
     placeStage();
   }
 
@@ -168,6 +175,8 @@
     body.classList.add('logo-intro-done');
     body.classList.remove('logo-intro-hide');
     if (stage && stage.parentNode) stage.parentNode.removeChild(stage);
+    if (clip && clip.parentNode) clip.parentNode.removeChild(clip);
+    clip = null;
     stage = null;
     // Les classes d'état restent en place : elles figent le hero dans son état final
     // (opacité 1, pas de transform) et empêchent les animations d'entrée d'origine de rejouer.

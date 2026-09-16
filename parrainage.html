@@ -367,7 +367,7 @@ async function sendForm(form, btnId, msgId, okText, mailSubject){
   const btn = document.getElementById(btnId), msg = document.getElementById(msgId);
   btn.disabled = true;
   const finPending = window.celeorPending(msg, btn, 'Envoi en cours…');
-  const data = Object.fromEntries(new FormData(form).entries()); delete data._honey;
+  const data = Object.fromEntries(new FormData(form).entries());
   try{
     const r = await fetch('https://formsubmit.co/ajax/' + CELEOR_FORM_EMAIL, { method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify(data) });

@@ -71,6 +71,7 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
     <button class="tab" data-tab="appels">Appels d'offres <span class="n" id="n-ao">–</span></button>
     <button class="tab" data-tab="reservations">Réservations <span class="n" id="n-res">–</span></button>
     <button class="tab" data-tab="contacts">Contacts <span class="n" id="n-contacts">–</span></button>
+    <button class="tab" data-tab="emails">E-mails <span class="n" id="n-emails">–</span></button>
   </div>
 
   <!-- ── Prestataires ── -->
@@ -117,6 +118,12 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
     <div class="btn-row" style="margin:0 0 12px"><input type="search" id="contacts-q" placeholder="Rechercher un nom, un e-mail…" style="max-width:320px"><button class="btn" type="button" id="contacts-csv">Exporter en CSV</button></div>
     <div class="card"><div class="count" id="contacts-count"></div><div style="overflow:auto"><table class="table" id="contacts-table"></table></div></div>
   </section>
+
+  <!-- ── E-mails de relance (lot Relances) ── -->
+  <section id="tab-emails" class="hidden">
+    <div class="card" id="emails-etat" style="margin-bottom:12px"></div>
+    <div class="card"><div class="count" id="emails-count"></div><div style="overflow:auto"><table class="table" id="emails-table"></table></div></div>
+  </section>
 </div>
 
 <footer>© 2026 Celeor Agency — <a href="index.html">Retour à l'accueil</a> · <a href="legal.html">Mentions légales &amp; confidentialité</a></footer>
@@ -144,7 +151,7 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
     b.addEventListener('click', function(){
       document.querySelectorAll('#tabs .tab').forEach(function(x){ x.classList.remove('active'); });
       b.classList.add('active');
-      ['prestataires','organisateurs','appels','reservations','contacts'].forEach(function(k){ $('tab-'+k).classList.toggle('hidden', k!==b.dataset.tab); });
+      ['prestataires','organisateurs','appels','reservations','contacts','emails'].forEach(function(k){ $('tab-'+k).classList.toggle('hidden', k!==b.dataset.tab); });
     });
   });
 
@@ -330,10 +337,52 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
   $('export-presta').addEventListener('click', function(){ exporter('export_prestataires', HEAD_PRESTA, 'celeor_prestataires_export'); });
   $('export-orga').addEventListener('click', function(){ exporter('export_organisateurs', HEAD_ORGA, 'celeor_organisateurs_export'); });
 
+  /* ── E-mails de relance (lot Relances) ── */
+  var LIB_SEQ = { presta_inscription:'Inscription prestataire inachevée', verif_a_corriger:'Dossier à corriger', orga_incomplete:'Organisation incomplète' };
+  var LIB_ST = { prevu:'Prévu', envoye:'Envoyé', annule:'Annulé', echec:'Échec' };
+  var LIB_RAISON = { dossier_soumis:'dossier envoyé', profil_publie:'profil publié', organisation_complete:'organisation complétée', dossier_corrige:'dossier corrigé', nouveau_dossier:'nouveau dossier', desinscription:'désinscription', relances_refusees:'rappels refusés', fenetre_depassee:'délai de 14 jours dépassé', arret_manuel:'arrêt manuel', adresse_bloquee_ou_compte_inactif:'adresse bloquée', plus_prestataire:'n\u2019est plus prestataire', plus_organisateur:'n\u2019est plus organisateur', compte_supprime:'compte supprimé' };
+  function chargerEmails(){
+    return Promise.all([
+      sb.from('relances_reglages').select('*').eq('id', 1).maybeSingle(),
+      sb.from('email_jobs').select('*').order('scheduled_for', { ascending:false }).limit(300),
+      sb.from('profils').select('user_id, prenom, nom, email')
+    ]).then(function(rs){
+      if(rs[0].error || rs[1].error){ $('emails-etat').innerHTML = '<span class="hint">Relances non installées.</span>'; $('n-emails').textContent = '0'; return; }
+      var r = rs[0].data, jobs = rs[1].data || [], noms = {};
+      (rs[2].data || []).forEach(function(p){ noms[p.user_id] = p; });
+      $('emails-etat').innerHTML = !r ? '' : (!r.envoi_actif
+        ? '<b>Relances à l\u2019arrêt.</b> Aucun e-mail ne part.'
+        : (r.mode_test ? '<b>Mode test.</b> Tous les e-mails partent vers <b>' + esc(r.email_test) + '</b>, aucun vers les utilisateurs.'
+                       : '<b>Relances actives.</b> Les e-mails partent vers les utilisateurs.'))
+        + ' <span class="hint">1re relance à J+' + Math.round(r.delai1_heures/24) + ', 2e à J+' + Math.round(r.delai2_heures/24) + ', arrêt après ' + r.fenetre_jours + ' jours.</span>';
+      var prevus = jobs.filter(function(j){ return j.status === 'prevu'; }).length;
+      $('n-emails').textContent = prevus;
+      $('emails-count').textContent = jobs.length + ' relance' + (jobs.length>1?'s':'') + ' (' + prevus + ' prévue' + (prevus>1?'s':'') + ')';
+      $('emails-table').innerHTML = '<tr><th>Destinataire</th><th>Relance</th><th>Prévue le</th><th>Statut</th><th>Détail</th><th></th></tr>' + (jobs.length ? jobs.map(function(j){
+        var p = noms[j.user_id] || {};
+        var detail = j.status === 'envoye' ? 'le ' + dt(j.sent_at) + (j.mode_test ? ' (test → ' + esc(j.sent_to) + ')' : '')
+                   : j.status === 'annule' ? esc(LIB_RAISON[j.cancel_reason] || j.cancel_reason || '')
+                   : j.status === 'echec' ? esc(j.erreur || '') : '';
+        return '<tr><td>' + esc(((p.prenom||'') + ' ' + (p.nom||'')).trim() || '—') + '<br><span class="hint">' + esc(p.email || '') + '</span></td><td>'
+          + esc(LIB_SEQ[j.sequence] || j.sequence) + ' — n°' + j.etape + '</td><td>' + dt(j.scheduled_for) + '</td><td>' + esc(LIB_ST[j.status] || j.status) + '</td><td>' + detail + '</td><td>'
+          + (j.status === 'prevu' ? '<button class="btn" type="button" data-stop="' + esc(j.id) + '">Arrêter</button>' : '') + '</td></tr>';
+      }).join('') : '<tr><td colspan="6" class="empty">Aucune relance pour le moment.</td></tr>');
+    });
+  }
+  $('emails-table').addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-stop]'); if(!b) return;
+    b.disabled = true;
+    sb.rpc('relance_arreter', { p_job: b.getAttribute('data-stop') }).then(function(r){
+      if(r.error) throw r.error;
+      return chargerEmails();
+    }).catch(function(e){ b.disabled = false; alert('Arrêt impossible : ' + (e.message||e)); });
+  });
+
   /* ── Démarrage ── */
   window.celeor.requireAdmin().then(function(c){
     C = c; sb = C.sb;
     $('sous-titre').textContent = 'Connectée en tant que ' + C.user.email + '. Les dossiers à traiter apparaissent en premier.';
+    chargerEmails().catch(function(){});
     Promise.all([chargerDossiers(), chargerOrganisateurs(), chargerAO(), chargerDemandes(), chargerContacts()])
       .catch(function(e){ $('sous-titre').textContent = 'Erreur de chargement : ' + (e.message||e); });
     setInterval(function(){ chargerDossiers().catch(function(){}); }, 60000);

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Préférences e-mail — Celeor Agency</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="theme.js"></script>
+<link rel="stylesheet" href="compte.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <img src="logo.svg" alt="Celeor Agency" class="logo-img">
+  </a>
+</nav>
+
+<div class="page">
+  <div class="section-tag">Vos préférences</div>
+  <h1>Vos e-mails <span class="hl">Celeor</span></h1>
+  <p class="page-sub" id="intro">Choisissez les messages que vous ne souhaitez plus recevoir. Les e-mails indispensables à votre compte (confirmation, sécurité, validation de dossier) restent envoyés.</p>
+
+  <div class="form-card" id="choix">
+    <button class="btn-submit" type="button" id="btn-rappels">Ne plus recevoir les rappels d’inscription</button>
+    <div style="height:12px"></div>
+    <button class="btn-submit" type="button" id="btn-tout" style="background:transparent;border:1px solid var(--border);color:var(--gray)">Me désinscrire de tous les e-mails Celeor<br><small>rappels, newsletter et mises à jour</small></button>
+    <div class="form-msg" id="msg" style="margin-top:16px"></div>
+  </div>
+
+  <p class="hint" style="text-align:center">Vous pourrez modifier vos choix à tout moment depuis <a href="espace.html" style="color:var(--gold2)">votre espace</a>.</p>
+</div>
+
+<footer>© 2026 Celeor Agency — <a href="index.html">Retour à l'accueil</a> · <a href="legal.html#rgpd">Confidentialité</a></footer>
+
+<script>
+(function(){
+  var SUPABASE_URL = 'https://joctwxwwczrhxkbhsnim.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_q9sVpL2BOOAixuLu0MouZA_otgUHs4D'; // clé publique (la même que celeor-db.js)
+  var token = new URLSearchParams(location.search).get('t') || '';
+  var msg = document.getElementById('msg');
+  function show(type, html){ msg.className = 'form-msg ' + type; msg.innerHTML = html; }
+  var valide = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token);
+  var btns = [document.getElementById('btn-rappels'), document.getElementById('btn-tout')];
+  if(!valide){
+    btns.forEach(function(b){ b.disabled = true; });
+    show('err', 'Ce lien n’est pas valide. Pour gérer vos e-mails, connectez-vous à <a href="espace.html">votre espace</a>.');
+    return;
+  }
+  function envoyer(tout){
+    btns.forEach(function(b){ b.disabled = true; });
+    show('pending', 'Enregistrement…');
+    fetch(SUPABASE_URL + '/rest/v1/rpc/relances_desinscrire', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+      body: JSON.stringify({ p_token: token, p_tout: tout })
+    }).then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function(ok){
+        if(ok !== true) throw new Error('lien inconnu');
+        show('ok', tout ? '<b>C’est noté.</b> Vous ne recevrez plus d’e-mails Celeor en dehors des messages indispensables à votre compte.'
+                        : '<b>C’est noté.</b> Vous ne recevrez plus de rappels d’inscription.');
+      })
+      .catch(function(){
+        btns.forEach(function(b){ b.disabled = false; });
+        show('err', 'Impossible d’enregistrer votre choix pour le moment. Réessayez, ou écrivez-nous à <a href="mailto:contact@celeor-agency.com">contact@celeor-agency.com</a>.');
+      });
+  }
+  btns[0].addEventListener('click', function(){ envoyer(false); });
+  btns[1].addEventListener('click', function(){ envoyer(true); });
+})();
+</script>
+</body>
+</html>

@@ -96,6 +96,7 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
 
   <!-- ── Organisateurs ── -->
   <section id="tab-organisateurs" class="hidden">
+    <div class="btn-row" style="margin:0 0 12px"><button class="btn" type="button" id="export-orga">Exporter organisateurs (CSV)</button><button class="btn" type="button" id="export-presta">Exporter prestataires (CSV)</button><span class="count" id="export-msg" style="align-self:center"></span></div>
     <div class="card"><div class="count" id="orga-count"></div><div style="overflow:auto"><table class="table" id="orga-table"></table></div></div>
   </section>
 
@@ -247,13 +248,20 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
 
   /* ── Organisateurs ── */
   function chargerOrganisateurs(){
-    return sb.from('profils').select('*').eq('est_organisateur', true).order('created_at', { ascending:false }).then(function(r){
+    var orgs = {};
+    return sb.from('organisation_membres').select('user_id, fonction, organisations(type, raison_sociale, nom_affiche)').then(function(rm){
+      if(!rm.error) (rm.data||[]).forEach(function(m){ if(!orgs[m.user_id]) orgs[m.user_id] = m; });
+    }, function(){}).then(function(){
+      return sb.from('profils').select('*').eq('est_organisateur', true).order('created_at', { ascending:false });
+    }).then(function(r){
       if(r.error) throw r.error;
       var rows = r.data || [];
       $('n-orga').textContent = rows.length; $('orga-count').textContent = rows.length + ' organisateur' + (rows.length>1?'s':'') + ' inscrit' + (rows.length>1?'s':'');
-      $('orga-table').innerHTML = '<tr><th>Nom</th><th>E-mail</th><th>Téléphone</th><th>Inscrit le</th><th>Newsletter</th></tr>' + (rows.length ? rows.map(function(p){
-        return '<tr><td>'+esc(((p.prenom||'')+' '+(p.nom||'')).trim())+'</td><td>'+esc(p.email)+'</td><td>'+esc(p.telephone||'—')+'</td><td>'+d(p.created_at)+'</td><td>'+(p.opt_in_newsletter?'oui':'non')+'</td></tr>';
-      }).join('') : '<tr><td colspan="5" class="empty">Aucun organisateur inscrit pour le moment. Les organisations, appels d’offres et devis arrivent avec le lot B.</td></tr>');
+      var LIB_TYPE = { company:'Entreprise', cse:'CSE', ce_legacy:'CE', association:'Association', agency:'Agence', public_body:'Organisme public', venue:'Lieu', individual:'Particulier', other:'Autre' };
+      $('orga-table').innerHTML = '<tr><th>Nom</th><th>Organisation</th><th>Type</th><th>E-mail</th><th>Téléphone</th><th>Inscrit le</th><th>Newsletter</th></tr>' + (rows.length ? rows.map(function(p){
+        var m = orgs[p.user_id], o = m && m.organisations;
+        return '<tr><td>'+esc(((p.prenom||'')+' '+(p.nom||'')).trim())+'</td><td>'+esc(o ? (o.nom_affiche||o.raison_sociale||'—') : '—')+'</td><td>'+esc(o ? (LIB_TYPE[o.type]||o.type) : '—')+'</td><td>'+esc(p.email)+'</td><td>'+esc(p.telephone||'—')+'</td><td>'+d(p.created_at)+'</td><td>'+(p.opt_in_newsletter?'oui':'non')+'</td></tr>';
+      }).join('') : '<tr><td colspan="7" class="empty">Aucun organisateur inscrit pour le moment. Les organisations, appels d’offres et devis arrivent avec le lot B.</td></tr>');
     });
   }
 
@@ -303,6 +311,24 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
     var blob = new Blob(['﻿'+lines.join('\n')], { type:'text/csv;charset=utf-8' });
     var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'celeor-contacts-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
   });
+
+  /* ── Exports CRM au format exact des modèles (lot Fondations) ── */
+  var HEAD_PRESTA = 'provider_profile_id,user_id,account_status,onboarding_stage,verification_status,verification_expires_at,created_at,last_activity_at,signup_completed_at,legal_first_name,legal_last_name,professional_display_name,email,email_verified_at,phone,phone_verified_at,professional_status,main_profession,skills,city,department,country,portfolio_url,website_url,instagram_url,legal_business_name,business_form,siren,siret,activity_label,intermittent_role,profile_visibility,accepts_quote_requests,availability_status,marketing_opt_in,marketing_opt_in_at,marketing_opt_in_source,product_updates_opt_in,product_updates_opt_in_at,newsletter_topics,unsubscribed_at,email_suppressed_at,consent_proof_version,crm_segment,owner_user_id,last_quote_request_at,last_quote_sent_at,last_quote_accepted_at,notes_internal'.split(',');
+  var HEAD_ORGA = 'organizer_profile_id,user_id,account_status,onboarding_stage,organization_verification_status,created_at,last_activity_at,signup_completed_at,contact_first_name,contact_last_name,contact_job_title,email,email_verified_at,phone,phone_verified_at,organization_type,organization_legal_name,organization_display_name,siren,siret,vat_number,billing_address_line1,billing_address_line2,billing_postal_code,billing_city,billing_country,website_url,organization_size,employee_count_range,cse_status,event_types,event_city,event_department,event_country,estimated_events_per_year,estimated_budget_range,profile_visibility,marketing_opt_in,marketing_opt_in_at,marketing_opt_in_source,product_updates_opt_in,product_updates_opt_in_at,newsletter_topics,unsubscribed_at,email_suppressed_at,consent_proof_version,crm_segment,owner_user_id,last_brief_started_at,last_brief_published_at,last_quote_received_at,last_quote_viewed_at,last_quote_accepted_at,last_event_date,notes_internal'.split(',');
+  function csvCell(v){ if(v === null || v === undefined) return ''; v = String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }
+  function exporter(fn, head, nom){
+    $('export-msg').textContent = 'Export en cours…';
+    sb.rpc(fn).then(function(r){
+      if(r.error) throw r.error;
+      var rows = r.data || [];
+      var lines = [head.join(',')].concat(rows.map(function(o){ return head.map(function(k){ return csvCell(o[k]); }).join(','); }));
+      var blob = new Blob([lines.join('\n') + '\n'], { type:'text/csv;charset=utf-8' });
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nom + '-' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+      $('export-msg').textContent = rows.length + ' ligne' + (rows.length>1?'s':'') + ' exportée' + (rows.length>1?'s':'') + '.';
+    }).catch(function(e){ $('export-msg').textContent = 'Export impossible : ' + (e.message||e); });
+  }
+  $('export-presta').addEventListener('click', function(){ exporter('export_prestataires', HEAD_PRESTA, 'celeor_prestataires_export'); });
+  $('export-orga').addEventListener('click', function(){ exporter('export_organisateurs', HEAD_ORGA, 'celeor_organisateurs_export'); });
 
   /* ── Démarrage ── */
   window.celeor.requireAdmin().then(function(c){

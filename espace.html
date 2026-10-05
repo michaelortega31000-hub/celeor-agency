@@ -206,8 +206,71 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
 
     <!-- ── Organisateur ── -->
     <div class="step-card hidden" id="card-orga">
-      <div class="step-head"><h2>Espace organisateur</h2><span class="badge draft">Bientôt</span></div>
-      <p class="hint">Vos appels d'offres et vos demandes de devis apparaîtront ici avec les réponses des prestataires. En attendant, tout continue de fonctionner par les formulaires du site :</p>
+      <div class="step-head"><h2>Espace organisateur</h2><span class="badge draft" id="orga-badge">À compléter</span></div>
+      <p class="hint">Présentez votre structure : nous pourrons vous proposer les talents les plus adaptés à vos événements. Ces informations restent privées.</p>
+      <form id="orga-form" novalidate>
+        <div class="frow">
+          <div><label>Vous organisez au nom de *</label>
+            <select name="type" id="o-type">
+              <option value="">Choisir…</option>
+              <option value="company">Une entreprise</option>
+              <option value="cse">Un CSE (comité social et économique)</option>
+              <option value="association">Une association</option>
+              <option value="agency">Une agence événementielle</option>
+              <option value="public_body">Une collectivité ou un organisme public</option>
+              <option value="venue">Un lieu de réception</option>
+              <option value="individual">Un particulier (mariage, anniversaire…)</option>
+              <option value="other">Autre</option>
+            </select></div>
+          <div><label>Votre fonction</label><input type="text" name="fonction" placeholder="Ex. : élu(e) CSE, chargée de communication…"></div>
+        </div>
+        <div id="o-structure" class="hidden">
+          <div class="frow hidden" id="o-cse">
+            <div><label>Statut du CSE</label>
+              <select name="cse_statut">
+                <option value="active_cse">CSE en place</option>
+                <option value="cse_to_be_confirmed">À confirmer</option>
+              </select></div>
+            <div></div>
+          </div>
+          <div class="frow">
+            <div><label>Raison sociale *</label><input type="text" name="raison_sociale"></div>
+            <div><label>Nom affiché <span style="text-transform:none;letter-spacing:0;font-weight:400">(si différent)</span></label><input type="text" name="nom_affiche"></div>
+          </div>
+          <div class="frow three">
+            <div><label>SIREN <span style="text-transform:none;letter-spacing:0;font-weight:400">(9 chiffres)</span></label><input type="text" name="siren" inputmode="numeric" maxlength="9"></div>
+            <div><label>SIRET <span style="text-transform:none;letter-spacing:0;font-weight:400">(14 chiffres)</span></label><input type="text" name="siret" inputmode="numeric" maxlength="14"></div>
+            <div><label>N° de TVA</label><input type="text" name="tva"></div>
+          </div>
+          <div class="frow">
+            <div><label>Adresse de facturation</label><input type="text" name="adresse1"></div>
+            <div><label>Complément</label><input type="text" name="adresse2"></div>
+          </div>
+          <div class="frow three">
+            <div><label>Code postal</label><input type="text" name="code_postal" inputmode="numeric"></div>
+            <div><label>Ville</label><input type="text" name="ville"></div>
+            <div><label>Pays</label><input type="text" name="pays" placeholder="France"></div>
+          </div>
+          <div class="frow three">
+            <div><label>Site web</label><input type="url" name="site_web" placeholder="https://"></div>
+            <div><label>Effectif</label>
+              <select name="effectif"><option value="">—</option><option>1-10</option><option>11-49</option><option>50-249</option><option>250-999</option><option>1000+</option></select></div>
+            <div></div>
+          </div>
+        </div>
+        <label style="margin-top:14px">Types d'événements organisés</label>
+        <div class="frow three" id="o-events"></div>
+        <div class="frow three">
+          <div><label>Ville principale des événements</label><input type="text" name="event_ville"></div>
+          <div><label>Événements par an</label>
+            <select name="events_par_an"><option value="">—</option><option>1</option><option>2-5</option><option>6-20</option><option>20+</option></select></div>
+          <div><label>Budget habituel par événement</label>
+            <select name="budget_tranche"><option value="">—</option><option>Moins de 1 000 €</option><option>1 000 – 5 000 €</option><option>5 000 – 15 000 €</option><option>15 000 – 50 000 €</option><option>Plus de 50 000 €</option></select></div>
+        </div>
+        <div class="btn-row"><button class="btn primary" type="submit">Enregistrer mon organisation</button></div>
+        <div class="form-msg" id="orga-msg"></div>
+      </form>
+      <p class="hint" style="margin-top:18px">Vos appels d'offres et demandes de devis apparaîtront bientôt ici. En attendant, ils passent par les formulaires du site :</p>
       <div class="btn-row"><a class="btn" href="appel-offres.html">Publier un appel d'offres</a><a class="btn" href="index.html#booking">Demander un devis</a><a class="btn" href="catalogue.html">Parcourir le catalogue</a></div>
     </div>
 
@@ -483,6 +546,80 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
     }).catch(function(e){ msg('infos-msg','err', esc(e.message||e)); });
   });
 
+  /* ── Organisateur : fiche organisation (lot Fondations) ── */
+  var EVENTS_ORGA = [['mariage','Mariage'],['anniversaire','Anniversaire / fête privée'],['soiree_entreprise','Soirée d\u2019entreprise'],['seminaire','Séminaire / convention'],['arbre_noel','Arbre de Noël / fête CSE'],['gala','Gala / cérémonie'],['salon','Salon / lancement produit'],['festival','Festival / événement public'],['autre','Autre']];
+  var orgaData = null, orgaFonction = null, orgaInit = false;
+  function orgaTypeUI(){
+    var f = $('orga-form'), t = f.elements['type'].value;
+    $('o-structure').classList.toggle('hidden', !t || t === 'individual');
+    $('o-cse').classList.toggle('hidden', t !== 'cse');
+  }
+  function renderOrga(){
+    var f = $('orga-form');
+    if(!orgaInit){
+      orgaInit = true;
+      $('o-events').innerHTML = EVENTS_ORGA.map(function(e){ return '<label class="check"><input type="checkbox" name="ev" value="'+e[0]+'"> '+e[1]+'</label>'; }).join('');
+      f.elements['type'].addEventListener('change', orgaTypeUI);
+      f.addEventListener('submit', function(ev){ ev.preventDefault(); saveOrga(); });
+      sb.from('organisation_membres').select('fonction, organisations(*)').eq('user_id', uid).order('created_at').limit(1).then(function(r){
+        if(r.error) return;  // tables pas encore créées : le formulaire reste vierge, rien ne casse
+        var row = r.data && r.data[0];
+        orgaData = row && row.organisations || null; orgaFonction = row && row.fonction || null;
+        fillOrga();
+      });
+    }
+    fillOrga();
+  }
+  function fillOrga(){
+    var f = $('orga-form');
+    if(orgaData){
+      ['type','raison_sociale','nom_affiche','siren','siret','tva','adresse1','adresse2','code_postal','ville','pays','site_web','effectif'].forEach(function(k){ if(f[k]) f[k].value = orgaData[k] || ''; });
+      if(orgaData.cse_statut && orgaData.type === 'cse') f.cse_statut.value = orgaData.cse_statut;
+    }
+    if(orgaFonction) f.fonction.value = orgaFonction;
+    if(profil){
+      var evs = profil.event_types || [];
+      Array.prototype.forEach.call(f.querySelectorAll('input[name=ev]'), function(i){ i.checked = evs.indexOf(i.value) > -1; });
+      f.event_ville.value = profil.event_ville || ''; f.events_par_an.value = profil.events_par_an || ''; f.budget_tranche.value = profil.budget_tranche || '';
+    }
+    var complet = orgaData && (orgaData.type === 'individual' || orgaData.raison_sociale);
+    $('orga-badge').className = 'badge ' + (complet ? 'approved' : 'draft');
+    $('orga-badge').textContent = complet ? 'Organisation enregistrée' : 'À compléter';
+    orgaTypeUI();
+  }
+  function saveOrga(){
+    var f = $('orga-form'), t = f.elements['type'].value;
+    if(!t) return msg('orga-msg','err','Indiquez pour qui vous organisez.');
+    var d = { type: t, fonction: f.fonction.value.trim() };
+    if(t !== 'individual'){
+      ['raison_sociale','nom_affiche','tva','adresse1','adresse2','code_postal','ville','pays','site_web','effectif'].forEach(function(k){ d[k] = f[k].value.trim(); });
+      d.siren = f.siren.value.replace(/\D/g,''); d.siret = f.siret.value.replace(/\D/g,'');
+      if(t === 'cse') d.cse_statut = f.cse_statut.value;
+      if(!d.raison_sociale) return msg('orga-msg','err','La raison sociale est obligatoire.');
+      if(d.siren && !/^\d{9}$/.test(d.siren)) return msg('orga-msg','err','Le SIREN doit comporter exactement 9 chiffres.');
+      if(d.siret && !/^\d{14}$/.test(d.siret)) return msg('orga-msg','err','Le SIRET doit comporter exactement 14 chiffres.');
+    }
+    var qualif = {
+      event_types: Array.prototype.filter.call(f.querySelectorAll('input[name=ev]'), function(i){ return i.checked; }).map(function(i){ return i.value; }),
+      event_ville: f.event_ville.value.trim() || null, events_par_an: f.events_par_an.value || null, budget_tranche: f.budget_tranche.value || null,
+      last_activity_at: new Date().toISOString()
+    };
+    msg('orga-msg','pending','Enregistrement…');
+    sb.rpc('enregistrer_organisation', { p: d }).then(function(r){
+      if(r.error) throw r.error;
+      return sb.from('profils').update(qualif).eq('user_id', uid).select().single();
+    }).then(function(r){
+      if(r.error) throw r.error;
+      profil = r.data; C.profil = profil;
+      return sb.from('organisation_membres').select('fonction, organisations(*)').eq('user_id', uid).order('created_at').limit(1);
+    }).then(function(r){
+      var row = r && r.data && r.data[0];
+      if(row){ orgaData = row.organisations; orgaFonction = row.fonction; }
+      fillOrga();
+      msg('orga-msg','ok','Organisation enregistrée.');
+    }).catch(function(e){ msg('orga-msg','err', 'Enregistrement impossible : ' + esc(e.message||e)); });
+  }
+
   /* ── Orchestration ── */
   function renderAll(){
     var presta = profil && profil.est_prestataire, orga = profil && profil.est_organisateur;
@@ -491,6 +628,7 @@ window.addEventListener('scroll',function(){if(document.getElementById('menu-pan
     $('card-orga').classList.toggle('hidden', !orga);
     if(presta || verif) renderVerif();
     if(presta || pub) renderProfil();
+    if(orga) renderOrga();
     renderInfos();
   }
   function charger(){
